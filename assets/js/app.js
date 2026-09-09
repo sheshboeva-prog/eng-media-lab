@@ -159,7 +159,7 @@ function renderContent() {
 const SECTIONS = [
   {
     tab: 'videos', label: 'Videos', unit: 'lessons',
-    blurb: 'Short talks and explainers, each one opening on YouTube.',
+    blurb: 'Short talks and explainers on the topics people actually discuss.',
     glyph: '<rect x="3" y="5" width="18" height="14" rx="2" /><path d="m10 9.5 5 2.5-5 2.5z" />',
   },
   {
@@ -169,19 +169,39 @@ const SECTIONS = [
   },
   {
     tab: 'quizzes', label: 'Quizzes', unit: 'activities',
-    blurb: 'Drag, sort and match. Everything plays on this page.',
+    blurb: 'Drag, sort and match. Every activity plays on this page.',
     glyph: '<path d="M4 7a3 3 0 0 1 3-3h3v2a2 2 0 1 0 4 0V4h3a3 3 0 0 1 3 3v3h-2a2 2 0 1 0 0 4h2v3a3 3 0 0 1-3 3h-3v-2a2 2 0 1 0-4 0v2H7a3 3 0 0 1-3-3v-3h2a2 2 0 1 0 0-4H4z" />',
   },
 ];
 
+const ARROW = '<path d="M5 12h13M13 6l6 6-6 6" />';
+
+function hero() {
+  const node = el('header', { className: 'hero' });
+  node.innerHTML = `
+    <p class="hero__eyebrow">English media library</p>
+    <h1 class="hero__title">Watch, test yourself, then play.</h1>
+    <p class="hero__lead">
+      Ten short lessons from teachers and TED-Ed, ten five-question tests marked the
+      moment you finish, and six activities that run without leaving the page.
+    </p>
+    <div class="hero__actions">
+      <button class="btn btn--primary" type="button" data-go="videos">Start watching</button>
+      <button class="btn" type="button" data-go="tests">Take a test</button>
+    </div>`;
+  $$('[data-go]', node).forEach((b) => b.addEventListener('click', () => setTab(b.dataset.go)));
+  return node;
+}
+
 function sectionCard({ tab, label, unit, blurb, glyph }) {
   const card = el('button', { className: 'section', type: 'button' });
   card.innerHTML = `
-    <span class="section__icon">${icon(glyph)}</span>
-    <span class="section__body">
-      <span class="section__title">${label}</span>
-      <span class="section__blurb">${blurb}</span>
+    <span class="section__top">
+      <span class="section__icon">${icon(glyph)}</span>
+      <span class="section__arrow">${icon(ARROW)}</span>
     </span>
+    <span class="section__title">${label}</span>
+    <span class="section__blurb">${blurb}</span>
     <span class="section__count">${datasets[tab].length} ${unit}</span>`;
   card.addEventListener('click', () => setTab(tab));
   return card;
@@ -192,7 +212,8 @@ function homeBlock(tab, heading, items, build, listClass) {
   block.innerHTML = `
     <div class="block__head">
       <h2 class="block__title">${heading}</h2>
-      <button class="linkish linkish--end" type="button">See all ${icon('<path d="M9 6l6 6-6 6" />')}</button>
+      <span class="block__of">${items.length} of ${datasets[tab].length}</span>
+      <button class="linkish linkish--end" type="button">See all ${icon(ARROW)}</button>
     </div>
     <div class="${listClass}"></div>`;
   const list = $(`.${listClass.split(' ')[0]}`, block);
@@ -203,6 +224,7 @@ function homeBlock(tab, heading, items, build, listClass) {
 
 function renderHome() {
   const frag = document.createDocumentFragment();
+  frag.append(hero());
 
   const sections = el('div', { className: 'sections' });
   SECTIONS.forEach((section) => sections.append(sectionCard(section)));
@@ -387,6 +409,7 @@ function renderTab() {
   const atHome = state.tab === 'home' && !run && !play;
   $('#home-btn').setAttribute('aria-current', atHome ? 'page' : 'false');
 
+  $('#page-head').hidden = atHome;
   $('#filters').hidden = focused;
   $('.search').hidden = focused;
   if (!focused) renderFilters();

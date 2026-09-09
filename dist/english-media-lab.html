@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>English Media Lab</title>
   <meta name="description" content="Videos, tests and quizzes for learning English." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" />
   <style>
 /* ---------------------------------------------------------------
    English Media Lab — design tokens
@@ -39,6 +42,7 @@
   --radius-lg: 20px;
   --header-h:  60px;
 
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
   --ease: cubic-bezier(.22, 1, .36, 1);
   color-scheme: light;
@@ -101,7 +105,7 @@ img, svg { display: block; max-width: 100%; }
 .main,
 .page-head,
 .filters,
-.footer > p {
+.footer__inner {
   width: min(1120px, 100% - 40px);
   margin-inline: auto;
 }
@@ -195,9 +199,10 @@ img, svg { display: block; max-width: 100%; }
 
 .page-head { margin-bottom: 20px; }
 .page-head__title {
-  font-size: clamp(24px, 3.4vw, 30px);
-  font-weight: 650;
-  letter-spacing: -.025em;
+  font-family: var(--font-display);
+  font-size: clamp(27px, 3.6vw, 34px);
+  font-weight: 600;
+  letter-spacing: -.015em;
 }
 .page-head__sub {
   margin-top: 4px;
@@ -453,18 +458,57 @@ img, svg { display: block; max-width: 100%; }
 /* ---------------------------------------------------------------
    Home
    --------------------------------------------------------------- */
+.hero {
+  padding-bottom: 38px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero__eyebrow {
+  color: var(--text-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.hero__title {
+  max-width: 17ch;
+  margin-top: 16px;
+  font-family: var(--font-display);
+  font-size: clamp(33px, 5.4vw, 50px);
+  font-weight: 500;
+  line-height: 1.06;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+
+.hero__lead {
+  max-width: 58ch;
+  margin-top: 16px;
+  color: var(--text-muted);
+  font-size: 15.5px;
+  line-height: 1.62;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 26px;
+}
+
 .sections {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
   gap: 14px;
-  margin-bottom: 44px;
+  margin-bottom: 52px;
 }
 
 .section {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
+  gap: 9px;
   padding: 20px;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -480,27 +524,40 @@ img, svg { display: block; max-width: 100%; }
   border-color: var(--border-strong);
 }
 
+.section__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
 .section__icon {
   display: grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: 12px;
   background: var(--vanilla-deep);
   color: #2b2107;
 }
-.section__icon svg { width: 21px; height: 21px; }
+.section__icon svg { width: 20px; height: 20px; }
 
-.section__body { display: block; }
-.section__title {
-  display: block;
-  font-size: 17px;
-  font-weight: 650;
-  letter-spacing: -.02em;
+.section__arrow {
+  color: var(--text-muted);
+  opacity: .4;
+  transition: opacity .22s, transform .28s var(--ease);
 }
+.section__arrow svg { width: 19px; height: 19px; }
+.section:hover .section__arrow { opacity: 1; transform: translateX(3px); }
+
+.section__title {
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+
 .section__blurb {
-  display: block;
-  margin-top: 3px;
   color: var(--text-muted);
   font-size: 13.5px;
   line-height: 1.5;
@@ -508,29 +565,43 @@ img, svg { display: block; max-width: 100%; }
 
 .section__count {
   margin-top: auto;
-  padding: 2px 9px;
-  border-radius: 999px;
-  background: var(--surface-muted);
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
   color: var(--text-muted);
-  font-size: 12.5px;
-  font-weight: 550;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .11em;
+  text-transform: uppercase;
 }
 
-.block + .block { margin-top: 40px; }
+.block + .block { margin-top: 48px; }
 
 .block__head {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
   gap: 12px;
-  margin-bottom: 16px;
+  padding-bottom: 12px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
 }
 .block__title {
-  font-size: 18px;
-  font-weight: 650;
-  letter-spacing: -.02em;
+  font-family: var(--font-display);
+  font-size: 23px;
+  font-weight: 600;
+  letter-spacing: -.015em;
 }
+.block__of {
+  color: var(--text-muted);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.linkish--end { margin-left: auto; }
 .linkish--end svg { width: 15px; height: 15px; }
+
+@media (max-width: 640px) {
+  .hero__title { max-width: none; }
+  .hero__actions .btn { flex: 1 1 auto; }
+}
 
 /* ---------------------------------------------------------------
    Quiz player
@@ -784,17 +855,25 @@ img, svg { display: block; max-width: 100%; }
    Footer
    --------------------------------------------------------------- */
 .footer {
-  padding: 28px 0 40px;
+  padding: 26px 0 44px;
+  margin-top: 56px;
   border-top: 1px solid var(--border);
   color: var(--text-muted);
   font-size: 13px;
 }
+.footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+}
+.footer__name { color: var(--text); font-weight: 550; }
 
 /* ---------------------------------------------------------------
    Responsive
    --------------------------------------------------------------- */
 @media (max-width: 640px) {
-  .header__inner, .main, .page-head, .filters, .footer > p {
+  .header__inner, .main, .page-head, .filters, .footer__inner {
     width: calc(100% - 32px);
   }
   .brand__text { display: none; }
@@ -842,7 +921,7 @@ img, svg { display: block; max-width: 100%; }
   </header>
 
   <main id="main" class="main" tabindex="-1">
-    <section class="page-head">
+    <section class="page-head" id="page-head">
       <h1 id="page-title" class="page-head__title">Videos</h1>
       <p id="page-sub" class="page-head__sub">Short lessons to watch and learn from.</p>
     </section>
@@ -853,7 +932,10 @@ img, svg { display: block; max-width: 100%; }
   </main>
 
   <footer class="footer">
-    <p>English Media Lab — template build. Content coming next.</p>
+    <div class="footer__inner">
+      <span class="footer__name">English Media Lab</span>
+      <span>Videos open on YouTube. Tests and quizzes run in the page.</span>
+    </div>
   </footer>
 
   </div>
@@ -1728,7 +1810,7 @@ function renderContent() {
 const SECTIONS = [
   {
     tab: 'videos', label: 'Videos', unit: 'lessons',
-    blurb: 'Short talks and explainers, each one opening on YouTube.',
+    blurb: 'Short talks and explainers on the topics people actually discuss.',
     glyph: '<rect x="3" y="5" width="18" height="14" rx="2" /><path d="m10 9.5 5 2.5-5 2.5z" />',
   },
   {
@@ -1738,19 +1820,39 @@ const SECTIONS = [
   },
   {
     tab: 'quizzes', label: 'Quizzes', unit: 'activities',
-    blurb: 'Drag, sort and match. Everything plays on this page.',
+    blurb: 'Drag, sort and match. Every activity plays on this page.',
     glyph: '<path d="M4 7a3 3 0 0 1 3-3h3v2a2 2 0 1 0 4 0V4h3a3 3 0 0 1 3 3v3h-2a2 2 0 1 0 0 4h2v3a3 3 0 0 1-3 3h-3v-2a2 2 0 1 0-4 0v2H7a3 3 0 0 1-3-3v-3h2a2 2 0 1 0 0-4H4z" />',
   },
 ];
 
+const ARROW = '<path d="M5 12h13M13 6l6 6-6 6" />';
+
+function hero() {
+  const node = el('header', { className: 'hero' });
+  node.innerHTML = `
+    <p class="hero__eyebrow">English media library</p>
+    <h1 class="hero__title">Watch, test yourself, then play.</h1>
+    <p class="hero__lead">
+      Ten short lessons from teachers and TED-Ed, ten five-question tests marked the
+      moment you finish, and six activities that run without leaving the page.
+    </p>
+    <div class="hero__actions">
+      <button class="btn btn--primary" type="button" data-go="videos">Start watching</button>
+      <button class="btn" type="button" data-go="tests">Take a test</button>
+    </div>`;
+  $$('[data-go]', node).forEach((b) => b.addEventListener('click', () => setTab(b.dataset.go)));
+  return node;
+}
+
 function sectionCard({ tab, label, unit, blurb, glyph }) {
   const card = el('button', { className: 'section', type: 'button' });
   card.innerHTML = `
-    <span class="section__icon">${icon(glyph)}</span>
-    <span class="section__body">
-      <span class="section__title">${label}</span>
-      <span class="section__blurb">${blurb}</span>
+    <span class="section__top">
+      <span class="section__icon">${icon(glyph)}</span>
+      <span class="section__arrow">${icon(ARROW)}</span>
     </span>
+    <span class="section__title">${label}</span>
+    <span class="section__blurb">${blurb}</span>
     <span class="section__count">${datasets[tab].length} ${unit}</span>`;
   card.addEventListener('click', () => setTab(tab));
   return card;
@@ -1761,7 +1863,8 @@ function homeBlock(tab, heading, items, build, listClass) {
   block.innerHTML = `
     <div class="block__head">
       <h2 class="block__title">${heading}</h2>
-      <button class="linkish linkish--end" type="button">See all ${icon('<path d="M9 6l6 6-6 6" />')}</button>
+      <span class="block__of">${items.length} of ${datasets[tab].length}</span>
+      <button class="linkish linkish--end" type="button">See all ${icon(ARROW)}</button>
     </div>
     <div class="${listClass}"></div>`;
   const list = $(`.${listClass.split(' ')[0]}`, block);
@@ -1772,6 +1875,7 @@ function homeBlock(tab, heading, items, build, listClass) {
 
 function renderHome() {
   const frag = document.createDocumentFragment();
+  frag.append(hero());
 
   const sections = el('div', { className: 'sections' });
   SECTIONS.forEach((section) => sections.append(sectionCard(section)));
@@ -1956,6 +2060,7 @@ function renderTab() {
   const atHome = state.tab === 'home' && !run && !play;
   $('#home-btn').setAttribute('aria-current', atHome ? 'page' : 'false');
 
+  $('#page-head').hidden = atHome;
   $('#filters').hidden = focused;
   $('.search').hidden = focused;
   if (!focused) renderFilters();
