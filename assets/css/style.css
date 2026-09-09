@@ -46,6 +46,11 @@ html { -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
+  background-image:
+    radial-gradient(70% 46% at 12% -6%, color-mix(in srgb, var(--vanilla) 42%, transparent), transparent 70%),
+    radial-gradient(48% 34% at 92% -12%, color-mix(in srgb, var(--vanilla) 26%, transparent), transparent 72%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   font-family: var(--font);
   font-size: 15px;
   line-height: 1.55;
@@ -489,16 +494,15 @@ img, svg { display: block; max-width: 100%; }
 
 .sections {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
-  gap: 14px;
-  margin-bottom: 52px;
+  grid-template-columns: repeat(auto-fit, minmax(258px, 1fr));
+  gap: 16px;
 }
 
 .section {
   display: flex;
   flex-direction: column;
   gap: 9px;
-  padding: 20px;
+  padding: 22px;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
@@ -523,13 +527,14 @@ img, svg { display: block; max-width: 100%; }
 .section__icon {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: var(--vanilla-deep);
-  color: #2b2107;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: var(--vanilla-soft);
+  border: 1px solid var(--vanilla-deep);
+  font-size: 21px;
+  line-height: 1;
 }
-.section__icon svg { width: 20px; height: 20px; }
 
 .section__arrow {
   color: var(--text-muted);
@@ -549,7 +554,7 @@ img, svg { display: block; max-width: 100%; }
 .section__blurb {
   color: var(--text-muted);
   font-size: 13.5px;
-  line-height: 1.5;
+  line-height: 1.62;
 }
 
 .section__count {
@@ -561,6 +566,34 @@ img, svg { display: block; max-width: 100%; }
   font-weight: 600;
   letter-spacing: .11em;
   text-transform: uppercase;
+}
+
+.motto {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 44px 0 56px;
+  padding: 30px 34px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(120deg, var(--vanilla-soft), var(--cream-deep));
+  border: 1px solid var(--vanilla-deep);
+}
+.motto__label {
+  color: #6a5722;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+.motto__line {
+  max-width: 30ch;
+  font-family: var(--font-display);
+  font-size: clamp(21px, 3vw, 28px);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -.015em;
+  text-wrap: balance;
+  color: #241d0d;
 }
 
 .block + .block { margin-top: 48px; }
@@ -856,7 +889,8 @@ img, svg { display: block; max-width: 100%; }
   justify-content: space-between;
   gap: 8px;
 }
-.footer__name { color: var(--text); font-weight: 550; }
+.footer__name { color: var(--text); font-weight: 600; letter-spacing: -.01em; }
+.footer__by { font-style: italic; }
 
 /* ---------------------------------------------------------------
    Responsive

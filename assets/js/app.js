@@ -1,13 +1,13 @@
-import { videos, tests, quizzes, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt, wordwallEmbed } from './data.js';
+import { videos, tests, games, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt, wordwallEmbed } from './data.js';
 
 /* ---------------------------------------------------------------
    State
    --------------------------------------------------------------- */
 const TABS = {
-  home:    { title: 'English Media Lab', sub: 'Watch a lesson, test what you know, then play.' },
+  home:    { title: 'EnglishMediaLab', sub: 'Watch a lesson, test what you know, then play a game.' },
   videos:  { title: 'Videos',  sub: 'Short lessons to watch and learn from.' },
   tests:   { title: 'Tests',   sub: 'Five questions on one topic, scored as soon as you finish.' },
-  quizzes: { title: 'Quizzes', sub: 'Interactive activities that play right here on the page.' },
+  games:   { title: 'Games',   sub: 'Interactive activities that play right here on the page.' },
 };
 
 const state = { tab: 'home', query: '', topic: 'all', run: null, play: null };
@@ -70,7 +70,7 @@ function testRow(item) {
   return row;
 }
 
-function quizCard(item) {
+function gameCard(item) {
   const card = el('button', { className: 'card', type: 'button' });
   card.innerHTML = `
     <div class="card__thumb card__thumb--media" style="aspect-ratio:4/3">
@@ -84,14 +84,14 @@ function quizCard(item) {
         <span class="tag">${item.type}</span>
       </div>
     </div>`;
-  card.addEventListener('click', () => startQuiz(item));
+  card.addEventListener('click', () => startGame(item));
   return card;
 }
 
 /* ---------------------------------------------------------------
    Render
    --------------------------------------------------------------- */
-const datasets = { videos, tests, quizzes };
+const datasets = { videos, tests, games };
 
 function matches(item) {
   const q = state.query.trim().toLowerCase();
@@ -148,7 +148,7 @@ function renderContent() {
   }
 
   const grid = el('div', { className: state.tab === 'tests' ? 'grid grid--list' : 'grid' });
-  const build = { videos: videoCard, tests: testRow, quizzes: quizCard }[state.tab];
+  const build = { videos: videoCard, tests: testRow, games: gameCard }[state.tab];
   items.forEach((item) => grid.append(build(item)));
   content.append(grid);
 }
@@ -158,19 +158,19 @@ function renderContent() {
    --------------------------------------------------------------- */
 const SECTIONS = [
   {
-    tab: 'videos', label: 'Videos', unit: 'lessons',
-    blurb: 'Short talks and explainers on the topics people actually discuss.',
-    glyph: '<rect x="3" y="5" width="18" height="14" rx="2" /><path d="m10 9.5 5 2.5-5 2.5z" />',
+    tab: 'videos', label: 'Videos', unit: 'lessons', mark: '🎥',
+    blurb: 'Watch short English-language videos on different topics. Listen carefully '
+         + 'and focus on the main ideas, key information, and new vocabulary.',
   },
   {
-    tab: 'tests', label: 'Tests', unit: 'topics',
-    blurb: 'Five questions at a time, scored the moment you finish.',
-    glyph: '<path d="M9 4h6a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" /><path d="M10 10h4M10 14h4" />',
+    tab: 'tests', label: 'Tests', unit: 'topics', mark: '📝',
+    blurb: 'Check your understanding after watching the videos. Answer the questions '
+         + 'and test your English knowledge, comprehension, and analytical skills.',
   },
   {
-    tab: 'quizzes', label: 'Quizzes', unit: 'activities',
-    blurb: 'Drag, sort and match. Every activity plays on this page.',
-    glyph: '<path d="M4 7a3 3 0 0 1 3-3h3v2a2 2 0 1 0 4 0V4h3a3 3 0 0 1 3 3v3h-2a2 2 0 1 0 0 4h2v3a3 3 0 0 1-3 3h-3v-2a2 2 0 1 0-4 0v2H7a3 3 0 0 1-3-3v-3h2a2 2 0 1 0 0-4H4z" />',
+    tab: 'games', label: 'Games', unit: 'activities', mark: '🎮',
+    blurb: 'Learn English in an enjoyable and interactive way. Complete different '
+         + 'language games to practise vocabulary, comprehension, and cognitive skills.',
   },
 ];
 
@@ -179,11 +179,11 @@ const ARROW = '<path d="M5 12h13M13 6l6 6-6 6" />';
 function hero() {
   const node = el('header', { className: 'hero' });
   node.innerHTML = `
-    <p class="hero__eyebrow">English media library</p>
-    <h1 class="hero__title">Watch, test yourself, then play.</h1>
+    <p class="hero__eyebrow">Interactive English platform</p>
+    <h1 class="hero__title">Welcome to EnglishMediaLab!</h1>
     <p class="hero__lead">
-      Ten short lessons from teachers and TED-Ed, ten five-question tests marked the
-      moment you finish, and six activities that run without leaving the page.
+      EnglishMediaLab is an interactive platform designed to help students improve
+      their English through videos, tests, and educational games.
     </p>
     <div class="hero__actions">
       <button class="btn btn--primary" type="button" data-go="videos">Start watching</button>
@@ -193,11 +193,11 @@ function hero() {
   return node;
 }
 
-function sectionCard({ tab, label, unit, blurb, glyph }) {
+function sectionCard({ tab, label, unit, blurb, mark }) {
   const card = el('button', { className: 'section', type: 'button' });
   card.innerHTML = `
     <span class="section__top">
-      <span class="section__icon">${icon(glyph)}</span>
+      <span class="section__icon" aria-hidden="true">${mark}</span>
       <span class="section__arrow">${icon(ARROW)}</span>
     </span>
     <span class="section__title">${label}</span>
@@ -222,6 +222,14 @@ function homeBlock(tab, heading, items, build, listClass) {
   return block;
 }
 
+function howToLearn() {
+  const node = el('section', { className: 'motto' });
+  node.innerHTML = `
+    <p class="motto__label">How to learn</p>
+    <p class="motto__line">Learn English through media, challenge your thinking, and enjoy the process!</p>`;
+  return node;
+}
+
 function renderHome() {
   const frag = document.createDocumentFragment();
   frag.append(hero());
@@ -229,39 +237,40 @@ function renderHome() {
   const sections = el('div', { className: 'sections' });
   SECTIONS.forEach((section) => sections.append(sectionCard(section)));
   frag.append(sections);
+  frag.append(howToLearn());
 
   frag.append(homeBlock('videos', 'Watch', videos.slice(0, 3), videoCard, 'grid'));
   frag.append(homeBlock('tests', 'Test yourself', tests.slice(0, 3), testRow, 'grid grid--list'));
-  frag.append(homeBlock('quizzes', 'Play', quizzes.slice(0, 3), quizCard, 'grid'));
+  frag.append(homeBlock('games', 'Play a game', games.slice(0, 3), gameCard, 'grid'));
   return frag;
 }
 
 /* ---------------------------------------------------------------
-   Quiz player — the activity runs in the page, nothing navigates away
+   Game player — the activity runs in the page, nothing navigates away
    --------------------------------------------------------------- */
-function startQuiz(quiz) {
-  state.play = quiz;
-  focusTab('quizzes');
+function startGame(game) {
+  state.play = game;
+  focusTab('games');
   renderTab();
   $('#main').scrollIntoView({ block: 'start' });
 }
 
-function exitQuiz() {
+function exitGame() {
   state.play = null;
   renderTab();
 }
 
 function renderPlayer() {
-  const quiz = state.play;
+  const game = state.play;
   const wrap = el('section', { className: 'player' });
   wrap.innerHTML = `
     <div class="runner__head">
-      <button class="linkish" type="button" data-exit>${icon('<path d="M15 18l-6-6 6-6" />')} All quizzes</button>
-      <span class="runner__step">${quiz.type}</span>
+      <button class="linkish" type="button" data-exit>${icon('<path d="M15 18l-6-6 6-6" />')} All games</button>
+      <span class="runner__step">${game.type}</span>
     </div>
-    <iframe class="player__frame" src="${wordwallEmbed(quiz.id)}" title="${quiz.title}"
+    <iframe class="player__frame" src="${wordwallEmbed(game.id)}" title="${game.title}"
             allowfullscreen loading="lazy"></iframe>`;
-  $('[data-exit]', wrap).addEventListener('click', exitQuiz);
+  $('[data-exit]', wrap).addEventListener('click', exitGame);
   return wrap;
 }
 
@@ -404,7 +413,7 @@ function renderTab() {
     : run ? `${run.test.topic} · ${countOf(run.test)} questions`
     : meta.sub;
   const name = play ? play.title : run ? run.test.title : meta.title;
-  document.title = state.tab === 'home' ? 'English Media Lab' : `${name} — English Media Lab`;
+  document.title = state.tab === 'home' ? 'EnglishMediaLab' : `${name} — EnglishMediaLab`;
 
   const atHome = state.tab === 'home' && !run && !play;
   $('#home-btn').setAttribute('aria-current', atHome ? 'page' : 'false');

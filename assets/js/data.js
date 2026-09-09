@@ -2,7 +2,7 @@
  * Site content.
  * Videos are YouTube lessons; the card links straight to the watch page.
  * Tests run in the page and are scored locally.
- * Quizzes are Wordwall activities embedded in the page — titles are left exactly
+ * Games are Wordwall activities embedded in the page — titles are left exactly
  * as their authors wrote them.
  */
 
@@ -657,7 +657,7 @@ export const tests = [
   }
 ];
 
-export const quizzes = [
+export const games = [
   {
     "id": "af29c2c07ec648b48296b9fd30a977f1",
     "title": "Environment",

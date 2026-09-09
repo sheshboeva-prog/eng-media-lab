@@ -1,6 +1,6 @@
-# English Media Lab
+# EnglishMediaLab
 
-Static site: a home page leading into Videos, Tests and Quizzes. No build step,
+Static site: a home page leading into Videos, Tests and Games. No build step,
 no dependencies.
 
 ## Run
@@ -18,7 +18,7 @@ Then open http://localhost:5173. A server is needed because the JS uses ES modul
 | `index.html` | Page shell: header, home button, content slot |
 | `assets/js/app.js` | Tab routing, home page, search, filters, test runner, quiz player |
 | `assets/css/style.css` | Design tokens and all styling; Newsreader for headings, system stack for text |
-| `assets/js/data.js` | All content: ten videos, ten tests, six quizzes |
+| `assets/js/data.js` | All content: ten videos, ten tests, six games |
 | `serve.py` | Dev server that sends `Cache-Control: no-store` so edits show on reload |
 
 The palette is cream and vanilla, defined at the top of the stylesheet as `--cream`,
@@ -34,7 +34,7 @@ Edit `assets/js/data.js`. Keep the field names and everything else keeps working
 { id, title, desc, topic, channel, duration }
 // tests — `answer` is the index of the correct option, 0 for A
 { id, title, desc, topic, questions: [{ q, options: [a, b, c, d], answer }] }
-// quizzes — `id` is the Wordwall activity hash; the embed URL is built from it
+// games — `id` is the Wordwall activity hash; the embed URL is built from it
 { id, title, type, topic, thumb }
 ```
 
@@ -49,17 +49,17 @@ Tests are done: ten topic tests of five questions each. Questions appear one at 
 time, and finishing shows a score with every question marked right or wrong and the
 correct answer next to each miss.
 
-Home opens with a hero — an eyebrow, a headline set in Newsreader, a one-line
-summary and two buttons — above three cards leading into the sections. The house
+Home opens with the welcome text, then three cards carrying the author's
+description of each section, then the "How to learn" note. The house
 button in the header is the only navigation control, marked in vanilla while you
 are on it. The page carries three cards leading into the sections,
 then the first three videos, tests and quizzes with a link through to each full list.
 Sections are reached from home, and the house button brings you back from anywhere,
 including out of a running test or quiz. Every section still has its own address
-(`#/videos`, `#/tests`, `#/quizzes`), so links into them keep working.
+(`#/videos`, `#/tests`, `#/games`), so links into them keep working.
 
-Quizzes are done: six Wordwall activities. The activity loads in an iframe on the
-Quizzes tab, so nothing navigates away from the site, and every word inside is the
+Games are done: six Wordwall activities. The activity loads in an iframe on the
+Games tab, so nothing navigates away from the site, and every word inside is the
 author's original. The iframe is created only when a quiz is opened.
 
 The filter chips are built from the `topic` values in the active tab, so adding an
@@ -84,3 +84,5 @@ The site appears at `https://<your-username>.github.io/eng-media-lab/` a minute 
 two later. To update it, commit and push again.
 
 `.nojekyll` is there so Pages serves the files untouched.
+
+The footer credit reads "By Author" — replace it in `index.html` with a real name.
