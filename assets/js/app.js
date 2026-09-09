@@ -371,14 +371,6 @@ function renderResults() {
   return wrap;
 }
 
-function moveIndicator() {
-  const active = $('.tab[aria-selected="true"]');
-  const indicator = $('.tabs__indicator');
-  if (!active || !indicator) return;
-  indicator.style.width = `${active.offsetWidth}px`;
-  indicator.style.transform = `translateX(${active.offsetLeft}px)`;
-}
-
 function renderTab() {
   const meta = TABS[state.tab];
   const run = state.run;
@@ -392,8 +384,8 @@ function renderTab() {
   const name = play ? play.title : run ? run.test.title : meta.title;
   document.title = state.tab === 'home' ? 'English Media Lab' : `${name} — English Media Lab`;
 
-  $$('.tab').forEach((tab) => tab.setAttribute('aria-selected', String(tab.dataset.tab === state.tab)));
-  moveIndicator();
+  const atHome = state.tab === 'home' && !run && !play;
+  $('#home-btn').setAttribute('aria-current', atHome ? 'page' : 'false');
 
   $('#filters').hidden = focused;
   $('.search').hidden = focused;
@@ -415,14 +407,11 @@ function setTab(tab, { pushHash = true } = {}) {
    Wiring
    --------------------------------------------------------------- */
 function init() {
-  $$('.tab').forEach((tab) => {
-    tab.addEventListener('click', () => setTab(tab.dataset.tab));
-    tab.addEventListener('keydown', (e) => {
-      const order = Object.keys(TABS);
-      const i = order.indexOf(state.tab);
-      if (e.key === 'ArrowRight') { setTab(order[(i + 1) % order.length]); $('.tab[aria-selected="true"]').focus(); }
-      if (e.key === 'ArrowLeft')  { setTab(order[(i - 1 + order.length) % order.length]); $('.tab[aria-selected="true"]').focus(); }
-    });
+  $('#home-btn').addEventListener('click', () => {
+    state.run = null;
+    state.play = null;
+    if (state.tab === 'home') renderTab();
+    else setTab('home');
   });
 
   $('#search').addEventListener('input', (e) => {
@@ -435,12 +424,10 @@ function init() {
   });
 
   addEventListener('hashchange', () => setTab(location.hash.replace('#/', '') || 'home', { pushHash: false }));
-  addEventListener('resize', moveIndicator);
 
   const initial = location.hash.replace('#/', '');
   state.tab = TABS[initial] ? initial : 'home';
   renderTab();
-  requestAnimationFrame(moveIndicator);
 }
 
 init();

@@ -1,6 +1,7 @@
 # English Media Lab
 
-Static site with four tabs: Home, Videos, Tests, Quizzes. No build step, no dependencies.
+Static site: a home page leading into Videos, Tests and Quizzes. No build step,
+no dependencies.
 
 ## Run
 
@@ -14,7 +15,7 @@ Then open http://localhost:5173. A server is needed because the JS uses ES modul
 
 | Path | Purpose |
 | --- | --- |
-| `index.html` | Page shell: header, tab bar, content slot |
+| `index.html` | Page shell: header, home button, content slot |
 | `assets/js/app.js` | Tab routing, home page, search, filters, test runner, quiz player |
 | `assets/css/style.css` | Design tokens and all styling |
 | `assets/js/data.js` | All content: ten videos, ten tests, six quizzes |
@@ -48,9 +49,12 @@ Tests are done: ten topic tests of five questions each. Questions appear one at 
 time, and finishing shows a score with every question marked right or wrong and the
 correct answer next to each miss.
 
-Home is the landing tab: three cards leading into the sections, then the first three
-videos, tests and quizzes, each with a link through to the full list. Starting a test
-or a quiz from there switches to its own tab.
+Home is the landing page and the only item in the header: a house button, marked in
+vanilla while you are on it. The page carries three cards leading into the sections,
+then the first three videos, tests and quizzes with a link through to each full list.
+Sections are reached from home, and the house button brings you back from anywhere,
+including out of a running test or quiz. Every section still has its own address
+(`#/videos`, `#/tests`, `#/quizzes`), so links into them keep working.
 
 Quizzes are done: six Wordwall activities. The activity loads in an iframe on the
 Quizzes tab, so nothing navigates away from the site, and every word inside is the

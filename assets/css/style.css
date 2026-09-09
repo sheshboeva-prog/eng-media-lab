@@ -90,7 +90,6 @@ img, svg { display: block; max-width: 100%; }
 }
 
 .header__inner,
-.tabs__inner,
 .main,
 .page-head,
 .filters,
@@ -173,43 +172,13 @@ img, svg { display: block; max-width: 100%; }
   transition: background .18s, border-color .18s, transform .18s var(--ease);
 }
 .icon-btn:hover { background: var(--surface-muted); }
+.icon-btn[aria-current="page"] {
+  background: var(--vanilla-deep);
+  border-color: var(--vanilla-deep);
+  color: #2b2107;
+}
 .icon-btn:active { transform: scale(.94); }
 .icon-btn svg { width: 17px; height: 17px; }
-
-/* ---------------------------------------------------------------
-   Tabs
-   --------------------------------------------------------------- */
-.tabs__inner {
-  position: relative;
-  display: flex;
-  gap: 4px;
-  padding-bottom: 0;
-}
-
-.tab {
-  position: relative;
-  z-index: 1;
-  padding: 12px 4px 14px;
-  margin-right: 20px;
-  border: 0;
-  background: none;
-  color: var(--text-muted);
-  font-weight: 500;
-  letter-spacing: -.01em;
-  cursor: pointer;
-  transition: color .2s;
-}
-.tab:hover { color: var(--text); }
-.tab[aria-selected="true"] { color: var(--text); font-weight: 600; }
-
-.tabs__indicator {
-  position: absolute;
-  bottom: 0;
-  height: 2px;
-  border-radius: 2px 2px 0 0;
-  background: var(--accent);
-  transition: transform .32s var(--ease), width .32s var(--ease);
-}
 
 /* ---------------------------------------------------------------
    Page head + filters
@@ -817,7 +786,7 @@ img, svg { display: block; max-width: 100%; }
    Responsive
    --------------------------------------------------------------- */
 @media (max-width: 640px) {
-  .header__inner, .tabs__inner, .main, .page-head, .filters, .footer > p {
+  .header__inner, .main, .page-head, .filters, .footer > p {
     width: calc(100% - 32px);
   }
   .brand__text { display: none; }
