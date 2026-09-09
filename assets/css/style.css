@@ -474,6 +474,88 @@ img, svg { display: block; max-width: 100%; }
 .empty strong { color: var(--text); font-weight: 600; }
 
 /* ---------------------------------------------------------------
+   Home
+   --------------------------------------------------------------- */
+.sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  margin-bottom: 44px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .2s;
+}
+.section:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
+}
+
+.section__icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--vanilla-deep);
+  color: #2b2107;
+}
+.section__icon svg { width: 21px; height: 21px; }
+
+.section__body { display: block; }
+.section__title {
+  display: block;
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -.02em;
+}
+.section__blurb {
+  display: block;
+  margin-top: 3px;
+  color: var(--text-muted);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.section__count {
+  margin-top: auto;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--surface-muted);
+  color: var(--text-muted);
+  font-size: 12.5px;
+  font-weight: 550;
+}
+
+.block + .block { margin-top: 40px; }
+
+.block__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.block__title {
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -.02em;
+}
+.linkish--end svg { width: 15px; height: 15px; }
+
+/* ---------------------------------------------------------------
    Quiz player
    --------------------------------------------------------------- */
 .player { max-width: 900px; }

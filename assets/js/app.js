@@ -4,12 +4,13 @@ import { videos, tests, quizzes, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt,
    State
    --------------------------------------------------------------- */
 const TABS = {
+  home:    { title: 'English Media Lab', sub: 'Watch a lesson, test what you know, then play.' },
   videos:  { title: 'Videos',  sub: 'Short lessons to watch and learn from.' },
   tests:   { title: 'Tests',   sub: 'Five questions on one topic, scored as soon as you finish.' },
   quizzes: { title: 'Quizzes', sub: 'Interactive activities that play right here on the page.' },
 };
 
-const state = { tab: 'videos', query: '', topic: 'all', run: null, play: null };
+const state = { tab: 'home', query: '', topic: 'all', run: null, play: null };
 
 const $  = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -130,6 +131,11 @@ function renderContent() {
     return;
   }
 
+  if (state.tab === 'home') {
+    content.replaceChildren(renderHome());
+    return;
+  }
+
   const items = datasets[state.tab].filter(matches);
   content.replaceChildren();
 
@@ -148,10 +154,72 @@ function renderContent() {
 }
 
 /* ---------------------------------------------------------------
+   Home — the three sections, with a few items from each
+   --------------------------------------------------------------- */
+const SECTIONS = [
+  {
+    tab: 'videos', label: 'Videos', unit: 'lessons',
+    blurb: 'Short talks and explainers, each one opening on YouTube.',
+    glyph: '<rect x="3" y="5" width="18" height="14" rx="2" /><path d="m10 9.5 5 2.5-5 2.5z" />',
+  },
+  {
+    tab: 'tests', label: 'Tests', unit: 'topics',
+    blurb: 'Five questions at a time, scored the moment you finish.',
+    glyph: '<path d="M9 4h6a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" /><path d="M10 10h4M10 14h4" />',
+  },
+  {
+    tab: 'quizzes', label: 'Quizzes', unit: 'activities',
+    blurb: 'Drag, sort and match. Everything plays on this page.',
+    glyph: '<path d="M4 7a3 3 0 0 1 3-3h3v2a2 2 0 1 0 4 0V4h3a3 3 0 0 1 3 3v3h-2a2 2 0 1 0 0 4h2v3a3 3 0 0 1-3 3h-3v-2a2 2 0 1 0-4 0v2H7a3 3 0 0 1-3-3v-3h2a2 2 0 1 0 0-4H4z" />',
+  },
+];
+
+function sectionCard({ tab, label, unit, blurb, glyph }) {
+  const card = el('button', { className: 'section', type: 'button' });
+  card.innerHTML = `
+    <span class="section__icon">${icon(glyph)}</span>
+    <span class="section__body">
+      <span class="section__title">${label}</span>
+      <span class="section__blurb">${blurb}</span>
+    </span>
+    <span class="section__count">${datasets[tab].length} ${unit}</span>`;
+  card.addEventListener('click', () => setTab(tab));
+  return card;
+}
+
+function homeBlock(tab, heading, items, build, listClass) {
+  const block = el('section', { className: 'block' });
+  block.innerHTML = `
+    <div class="block__head">
+      <h2 class="block__title">${heading}</h2>
+      <button class="linkish linkish--end" type="button">See all ${icon('<path d="M9 6l6 6-6 6" />')}</button>
+    </div>
+    <div class="${listClass}"></div>`;
+  const list = $(`.${listClass.split(' ')[0]}`, block);
+  items.forEach((item) => list.append(build(item)));
+  $('.linkish', block).addEventListener('click', () => setTab(tab));
+  return block;
+}
+
+function renderHome() {
+  const frag = document.createDocumentFragment();
+
+  const sections = el('div', { className: 'sections' });
+  SECTIONS.forEach((section) => sections.append(sectionCard(section)));
+  frag.append(sections);
+
+  frag.append(homeBlock('videos', 'Watch', videos.slice(0, 3), videoCard, 'grid'));
+  frag.append(homeBlock('tests', 'Test yourself', tests.slice(0, 3), testRow, 'grid grid--list'));
+  frag.append(homeBlock('quizzes', 'Play', quizzes.slice(0, 3), quizCard, 'grid'));
+  return frag;
+}
+
+/* ---------------------------------------------------------------
    Quiz player — the activity runs in the page, nothing navigates away
    --------------------------------------------------------------- */
 function startQuiz(quiz) {
   state.play = quiz;
+  focusTab('quizzes');
   renderTab();
   $('#main').scrollIntoView({ block: 'start' });
 }
@@ -180,8 +248,15 @@ function renderPlayer() {
    --------------------------------------------------------------- */
 function startTest(test) {
   state.run = { test, index: 0, answers: Array(test.questions.length).fill(null), done: false };
+  focusTab('tests');
   renderTab();
   $('#main').scrollIntoView({ block: 'start' });
+}
+
+/** Started from the home page, an activity still belongs to its own tab. */
+function focusTab(tab) {
+  state.tab = tab;
+  if (location.hash !== `#/${tab}`) location.hash = `#/${tab}`;
 }
 
 function exitTest() {
@@ -308,13 +383,14 @@ function renderTab() {
   const meta = TABS[state.tab];
   const run = state.run;
   const play = state.play;
-  const focused = Boolean(run || play);
+  const focused = Boolean(run || play) || state.tab === 'home';
 
   $('#page-title').textContent = play ? play.title : run ? run.test.title : meta.title;
   $('#page-sub').textContent = play ? play.topic
     : run ? `${run.test.topic} · ${countOf(run.test)} questions`
     : meta.sub;
-  document.title = `${play ? play.title : run ? run.test.title : meta.title} — English Media Lab`;
+  const name = play ? play.title : run ? run.test.title : meta.title;
+  document.title = state.tab === 'home' ? 'English Media Lab' : `${name} — English Media Lab`;
 
   $$('.tab').forEach((tab) => tab.setAttribute('aria-selected', String(tab.dataset.tab === state.tab)));
   moveIndicator();
@@ -358,11 +434,11 @@ function init() {
     if (e.key === 'Escape' && (state.run || state.play)) { state.run = null; state.play = null; renderTab(); }
   });
 
-  addEventListener('hashchange', () => setTab(location.hash.replace('#/', '') || 'videos', { pushHash: false }));
+  addEventListener('hashchange', () => setTab(location.hash.replace('#/', '') || 'home', { pushHash: false }));
   addEventListener('resize', moveIndicator);
 
   const initial = location.hash.replace('#/', '');
-  state.tab = TABS[initial] ? initial : 'videos';
+  state.tab = TABS[initial] ? initial : 'home';
   renderTab();
   requestAnimationFrame(moveIndicator);
 }

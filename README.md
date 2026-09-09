@@ -1,6 +1,6 @@
 # English Media Lab
 
-Static site with three tabs: Videos, Tests, Quizzes. No build step, no dependencies.
+Static site with four tabs: Home, Videos, Tests, Quizzes. No build step, no dependencies.
 
 ## Run
 
@@ -15,9 +15,9 @@ Then open http://localhost:5173. A server is needed because the JS uses ES modul
 | Path | Purpose |
 | --- | --- |
 | `index.html` | Page shell: header, tab bar, content slot |
+| `assets/js/app.js` | Tab routing, home page, search, filters, test runner, quiz player |
 | `assets/css/style.css` | Design tokens and all styling |
 | `assets/js/data.js` | All content: ten videos, ten tests, six quizzes |
-| `assets/js/app.js` | Tab routing, search, topic filter, cards, test runner, quiz player |
 | `serve.py` | Dev server that sends `Cache-Control: no-store` so edits show on reload |
 
 The palette is cream and vanilla, defined at the top of the stylesheet as `--cream`,
@@ -47,6 +47,10 @@ watch page in a new tab.
 Tests are done: ten topic tests of five questions each. Questions appear one at a
 time, and finishing shows a score with every question marked right or wrong and the
 correct answer next to each miss.
+
+Home is the landing tab: three cards leading into the sections, then the first three
+videos, tests and quizzes, each with a link through to the full list. Starting a test
+or a quiz from there switches to its own tab.
 
 Quizzes are done: six Wordwall activities. The activity loads in an iframe on the
 Quizzes tab, so nothing navigates away from the site, and every word inside is the
