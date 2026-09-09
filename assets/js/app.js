@@ -1,4 +1,4 @@
-import { videos, tests, games, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt, wordwallEmbed } from './data.js';
+import { videos, tests, games, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt } from './data.js';
 
 /* ---------------------------------------------------------------
    State
@@ -73,15 +73,17 @@ function testRow(item) {
 function gameCard(item) {
   const card = el('button', { className: 'card', type: 'button' });
   card.innerHTML = `
-    <div class="card__thumb card__thumb--media" style="aspect-ratio:4/3">
-      <img class="card__img" src="${item.thumb}" alt="" loading="lazy" />
-      <span class="card__tag">${item.topic}</span>
-      <span class="card__play">${icon('<path d="m9 7 9 5-9 5z" fill="currentColor" stroke="none" />')}</span>
+    <div class="cover cover--${item.cover}">
+      <span class="cover__type">${item.type}</span>
+      <span class="cover__title">${item.title}</span>
+      <span class="cover__play">${icon('<path d="m9 7 9 5-9 5z" fill="currentColor" stroke="none" />')}</span>
     </div>
     <div class="card__body">
-      <h3 class="card__title">${item.title}</h3>
+      <p class="card__desc card__desc--lead">${item.intro}</p>
       <div class="card__meta">
-        <span class="tag">${item.type}</span>
+        <span class="tag">${item.topic}</span>
+        <span class="dot"></span>
+        <span>${item.type}</span>
       </div>
     </div>`;
   card.addEventListener('click', () => startGame(item));
@@ -260,18 +262,279 @@ function exitGame() {
   renderTab();
 }
 
-function renderPlayer() {
-  const game = state.play;
+const shuffle = (list) => {
+  const out = [...list];
+  for (let i = out.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+};
+
+function playerShell(game, body) {
   const wrap = el('section', { className: 'player' });
   wrap.innerHTML = `
     <div class="runner__head">
       <button class="linkish" type="button" data-exit>${icon('<path d="M15 18l-6-6 6-6" />')} All games</button>
       <span class="runner__step">${game.type}</span>
     </div>
-    <iframe class="player__frame" src="${wordwallEmbed(game.id)}" title="${game.title}"
-            allowfullscreen loading="lazy"></iframe>`;
+    <p class="player__intro">${game.intro}</p>
+    <div class="board"></div>`;
   $('[data-exit]', wrap).addEventListener('click', exitGame);
+  $('.board', wrap).append(body);
   return wrap;
+}
+
+function renderPlayer() {
+  const game = state.play;
+  const engines = { match: matchGame, sort: sortGame, wheel: wheelGame, cards: cardsGame };
+  return playerShell(game, engines[game.kind](game));
+}
+
+/* --- match up: click a word, then click its meaning --- */
+function matchGame(game) {
+  const board = el('div', { className: 'match' });
+  const state_ = { picked: null, done: 0, misses: 0 };
+
+  const column = (side, entries) => {
+    const col = el('div', { className: `match__col match__col--${side}` });
+    entries.forEach(({ text, key }) => {
+      const btn = el('button', { className: 'match__item', type: 'button', textContent: text });
+      btn.dataset.key = key;
+      btn.dataset.side = side;
+      btn.addEventListener('click', () => pick(btn));
+      col.append(btn);
+    });
+    return col;
+  };
+
+  const status = el('p', { className: 'board__status', textContent: `0 of ${game.pairs.length} matched` });
+
+  function pick(btn) {
+    if (btn.classList.contains('is-done')) return;
+    if (!state_.picked) {
+      state_.picked = btn;
+      btn.classList.add('is-picked');
+      return;
+    }
+    if (state_.picked === btn) {
+      btn.classList.remove('is-picked');
+      state_.picked = null;
+      return;
+    }
+    if (state_.picked.dataset.side === btn.dataset.side) {
+      state_.picked.classList.remove('is-picked');
+      state_.picked = btn;
+      btn.classList.add('is-picked');
+      return;
+    }
+
+    const first = state_.picked;
+    state_.picked = null;
+    first.classList.remove('is-picked');
+
+    if (first.dataset.key === btn.dataset.key) {
+      [first, btn].forEach((n) => n.classList.add('is-done'));
+      state_.done += 1;
+      status.textContent = state_.done === game.pairs.length
+        ? `All ${game.pairs.length} matched${state_.misses ? ` after ${state_.misses} wrong ${state_.misses === 1 ? 'try' : 'tries'}` : ' first time'}.`
+        : `${state_.done} of ${game.pairs.length} matched`;
+      if (state_.done === game.pairs.length) status.classList.add('is-done');
+    } else {
+      state_.misses += 1;
+      [first, btn].forEach((n) => {
+        n.classList.add('is-wrong');
+        setTimeout(() => n.classList.remove('is-wrong'), 420);
+      });
+    }
+  }
+
+  const left = game.pairs.map(([term], i) => ({ text: term, key: String(i) }));
+  const right = game.pairs.map(([, meaning], i) => ({ text: meaning, key: String(i) }));
+  board.append(column('term', shuffle(left)), column('meaning', shuffle(right)));
+
+  const holder = el('div', { className: 'game' });
+  holder.append(board, status, replayButton(game));
+  return holder;
+}
+
+/* --- group sort: one item at a time, straight into a bin --- */
+function sortGame(game) {
+  const order = shuffle(game.items.map(([text, group], i) => ({ text, group, i })));
+  const holder = el('div', { className: 'game' });
+  const bins = el('div', { className: 'bins' });
+  const stage = el('div', { className: 'stage' });
+  const status = el('p', { className: 'board__status' });
+  let at = 0;
+  let right = 0;
+
+  const binNodes = game.groups.map((name, gi) => {
+    const bin = el('div', { className: 'bin' });
+    bin.innerHTML = `<button class="bin__label" type="button">${name}</button><div class="bin__items"></div>`;
+    $('.bin__label', bin).addEventListener('click', () => place(gi));
+    bins.append(bin);
+    return bin;
+  });
+
+  function draw() {
+    const item = order[at];
+    status.textContent = `${at} of ${order.length} sorted`;
+    stage.replaceChildren(el('div', { className: 'stage__card', textContent: item.text }));
+  }
+
+  function place(choice) {
+    if (at >= order.length) return;
+    const item = order[at];
+    const ok = choice === item.group;
+    if (ok) right += 1;
+    const chip = el('span', {
+      className: `chip-item ${ok ? 'is-ok' : 'is-no'}`,
+      textContent: item.text,
+    });
+    $('.bin__items', binNodes[item.group]).append(chip);
+    at += 1;
+    if (at < order.length) {
+      draw();
+    } else {
+      stage.replaceChildren(el('p', {
+        className: 'stage__done',
+        textContent: `${right} of ${order.length} in the right place.`,
+      }));
+      status.textContent = 'Every card sorted. Wrong ones sit in the group they belonged to.';
+      status.classList.add('is-done');
+    }
+  }
+
+  draw();
+  holder.append(stage, bins, status, replayButton(game));
+  return holder;
+}
+
+/* --- spin the wheel: a prompt to talk about --- */
+function wheelGame(game) {
+  const holder = el('div', { className: 'game game--centre' });
+  const size = 260;
+  const slices = game.prompts.length;
+  const wheel = el('canvas', { className: 'wheel', width: size * 2, height: size * 2 });
+  wheel.style.width = `${size}px`;
+  wheel.style.height = `${size}px`;
+
+  const ctx = wheel.getContext('2d');
+  const read = (token) => getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+  const tints = [read('--vanilla'), read('--cream-deep'), read('--vanilla-deep'), read('--vanilla-soft')];
+
+  const paint = (turn) => {
+    const r = size;
+    ctx.clearRect(0, 0, size * 2, size * 2);
+    ctx.save();
+    ctx.translate(r, r);
+    ctx.rotate(turn);
+    for (let i = 0; i < slices; i += 1) {
+      const a0 = (i / slices) * Math.PI * 2;
+      const a1 = ((i + 1) / slices) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, r - 8, a0, a1);
+      ctx.closePath();
+      ctx.fillStyle = tints[i % tints.length];
+      ctx.fill();
+      ctx.strokeStyle = read('--border-strong');
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.save();
+      ctx.rotate((a0 + a1) / 2);
+      ctx.fillStyle = '#2b2107';
+      ctx.font = '600 34px -apple-system, system-ui, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(i + 1), r - 34, 0);
+      ctx.restore();
+    }
+    ctx.restore();
+  };
+
+  let turn = 0;
+  let spinning = false;
+  const prompt = el('p', { className: 'wheel__prompt', textContent: 'Press spin to get a question.' });
+  const spin = el('button', { className: 'btn btn--primary', type: 'button', textContent: 'Spin' });
+
+  spin.addEventListener('click', () => {
+    if (spinning) return;
+    spinning = true;
+    spin.disabled = true;
+    prompt.classList.remove('is-live');
+    const landing = Math.floor(Math.random() * slices);
+    const target = turn + Math.PI * 8 + (Math.PI * 2 - ((landing + 0.5) / slices) * Math.PI * 2) - (turn % (Math.PI * 2)) - Math.PI / 2;
+    const from = turn;
+    const started = performance.now();
+    let settled = false;
+
+    const settle = () => {
+      if (settled) return;
+      settled = true;
+      turn = target;
+      paint(turn);
+      spinning = false;
+      spin.disabled = false;
+      spin.textContent = 'Spin again';
+      prompt.textContent = `${landing + 1}. ${game.prompts[landing]}`;
+      prompt.classList.add('is-live');
+    };
+
+    const run = (now) => {
+      const t = Math.min((now - started) / 3200, 1);
+      turn = from + (target - from) * (1 - Math.pow(1 - t, 4));
+      paint(turn);
+      if (t < 1) requestAnimationFrame(run);
+      else settle();
+    };
+    requestAnimationFrame(run);
+    // frames stop in a hidden tab, so land the wheel either way
+    setTimeout(settle, 3400);
+  });
+
+  paint(turn);
+  const dial = el('div', { className: 'wheel__dial' });
+  dial.innerHTML = '<span class="wheel__pin" aria-hidden="true"></span>';
+  dial.append(wheel);
+  holder.append(dial, prompt, el('div', { className: 'runner__actions runner__actions--centre' }, [spin]));
+  return holder;
+}
+
+/* --- speaking cards: one prompt at a time --- */
+function cardsGame(game) {
+  const holder = el('div', { className: 'game game--centre' });
+  let deck = shuffle(game.prompts);
+  let at = 0;
+
+  const card = el('div', { className: 'speak' });
+  const status = el('p', { className: 'board__status' });
+  const next = el('button', { className: 'btn btn--primary', type: 'button', textContent: 'Next card' });
+  const shuffleBtn = el('button', { className: 'btn', type: 'button', textContent: 'Shuffle' });
+
+  const draw = () => {
+    card.textContent = deck[at];
+    card.classList.remove('is-in');
+    requestAnimationFrame(() => card.classList.add('is-in'));
+    status.textContent = `Card ${at + 1} of ${deck.length}`;
+    next.textContent = at === deck.length - 1 ? 'Back to the first card' : 'Next card';
+  };
+
+  next.addEventListener('click', () => { at = (at + 1) % deck.length; draw(); });
+  shuffleBtn.addEventListener('click', () => { deck = shuffle(game.prompts); at = 0; draw(); });
+
+  draw();
+  holder.append(card, status, el('div', { className: 'runner__actions runner__actions--centre' }, [shuffleBtn, next]));
+  return holder;
+}
+
+function replayButton(game) {
+  const row = el('div', { className: 'runner__actions runner__actions--centre' });
+  const again = el('button', { className: 'btn', type: 'button', textContent: 'Start over' });
+  again.addEventListener('click', () => { state.play = game; renderContent(); });
+  row.append(again);
+  return row;
 }
 
 /* ---------------------------------------------------------------

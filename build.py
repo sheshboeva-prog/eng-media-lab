@@ -50,9 +50,6 @@ def inline_images(js):
     js = re.sub(r"export const youtubeThumb\s*=.*\n", 'export const youtubeThumb = (id) => THUMBS[id];\n', js)
     js = re.sub(r"export const youtubeThumbAlt\s*=.*\n", 'export const youtubeThumbAlt = (id) => THUMBS[id];\n', js)
     js = 'const THUMBS = ' + json.dumps(table) + ';\n\n' + js
-
-    for url in set(re.findall(r'"(https://screens\.cdn\.wordwall\.net/[^"]+)"', js)):
-        js = js.replace(url, as_data_uri(url, 'ww_' + url.split('/')[-1] + '.jpg'))
     return js
 
 

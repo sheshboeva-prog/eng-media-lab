@@ -2,8 +2,8 @@
  * Site content.
  * Videos are YouTube lessons; the card links straight to the watch page.
  * Tests run in the page and are scored locally.
- * Games are Wordwall activities embedded in the page — titles are left exactly
- * as their authors wrote them.
+ * Games run on the engines in app.js: `kind` picks the engine, and the rest of the
+ * fields are that engine's content.
  */
 
 export const videos = [
@@ -659,48 +659,210 @@ export const tests = [
 
 export const games = [
   {
-    "id": "af29c2c07ec648b48296b9fd30a977f1",
+    "id": "environment-match",
     "title": "Environment",
     "type": "Match up",
     "topic": "Environment",
-    "thumb": "https://screens.cdn.wordwall.net/800/af29c2c07ec648b48296b9fd30a977f1_1"
+    "cover": "sun",
+    "kind": "match",
+    "intro": "Pair each word with what it means.",
+    "pairs": [
+      [
+        "Pollution",
+        "Harmful substances released into air, water or soil"
+      ],
+      [
+        "Renewable energy",
+        "Power from sources that never run out, like sun and wind"
+      ],
+      [
+        "Deforestation",
+        "Clearing forests for farmland, building or timber"
+      ],
+      [
+        "Recycling",
+        "Turning used material into something that can be used again"
+      ],
+      [
+        "Emissions",
+        "Gases released into the air by vehicles and factories"
+      ],
+      [
+        "Drought",
+        "A long stretch with far less rain than an area normally gets"
+      ]
+    ]
   },
   {
-    "id": "24d610bb510648179521b7a35af27325",
-    "title": "Urbanization",
-    "type": "Speaking cards",
-    "topic": "Cities",
-    "thumb": "https://screens.cdn.wordwall.net/800/24d610bb510648179521b7a35af27325_59"
-  },
-  {
-    "id": "3f485e56e2d94290aaa88462ba922aee",
-    "title": "Social Media (+ & -)",
-    "type": "Group sort",
-    "topic": "Wellbeing",
-    "thumb": "https://screens.cdn.wordwall.net/800/3f485e56e2d94290aaa88462ba922aee_1"
-  },
-  {
-    "id": "0ad59e2e4ee147fcab4b0e08309f620f",
-    "title": "healthy lifestyle",
-    "type": "Random wheel",
-    "topic": "Health",
-    "thumb": "https://screens.cdn.wordwall.net/800/0ad59e2e4ee147fcab4b0e08309f620f_28"
-  },
-  {
-    "id": "d643d23e79964369af6fa0a84f0dcf33",
-    "title": "Travelling and Transport",
-    "type": "Group sort",
-    "topic": "Travel",
-    "thumb": "https://screens.cdn.wordwall.net/800/d643d23e79964369af6fa0a84f0dcf33_1"
-  },
-  {
-    "id": "b5277c5cbf7a41e7be4d8fc2ac591410",
-    "title": "Business Result Pre Unit 4",
+    "id": "business-match",
+    "title": "Business",
     "type": "Match up",
     "topic": "Business",
-    "thumb": "https://screens.cdn.wordwall.net/800/b5277c5cbf7a41e7be4d8fc2ac591410_1"
+    "cover": "ink",
+    "kind": "match",
+    "intro": "Pair each business word with what it means.",
+    "pairs": [
+      [
+        "Revenue",
+        "Everything a business takes in before costs"
+      ],
+      [
+        "Profit",
+        "What is left once every cost has been paid"
+      ],
+      [
+        "Customer",
+        "The person who buys the product or service"
+      ],
+      [
+        "Marketing",
+        "The work of telling people what a business offers"
+      ],
+      [
+        "Supplier",
+        "A company that provides the goods a business needs"
+      ],
+      [
+        "Demand",
+        "How much of a product people want to buy"
+      ]
+    ]
+  },
+  {
+    "id": "social-sort",
+    "title": "Social Media",
+    "type": "Group sort",
+    "topic": "Wellbeing",
+    "cover": "ink",
+    "kind": "sort",
+    "intro": "Decide where each one belongs.",
+    "groups": [
+      "Upside",
+      "Downside"
+    ],
+    "items": [
+      [
+        "Keeping up with friends who live far away",
+        0
+      ],
+      [
+        "Losing an evening to endless scrolling",
+        1
+      ],
+      [
+        "Finding people who share your interests",
+        0
+      ],
+      [
+        "Measuring your life against edited highlights",
+        1
+      ],
+      [
+        "Following the news as it happens",
+        0
+      ],
+      [
+        "Passing on a story nobody checked",
+        1
+      ],
+      [
+        "Showing your work to an audience",
+        0
+      ],
+      [
+        "Broken sleep from late-night screens",
+        1
+      ]
+    ]
+  },
+  {
+    "id": "travel-sort",
+    "title": "Travel",
+    "type": "Group sort",
+    "topic": "Travel",
+    "cover": "sun",
+    "kind": "sort",
+    "intro": "Sort each word into the part of the trip it belongs to.",
+    "groups": [
+      "Transport",
+      "Where you stay",
+      "Documents"
+    ],
+    "items": [
+      [
+        "Departure gate",
+        0
+      ],
+      [
+        "Connecting flight",
+        0
+      ],
+      [
+        "Platform",
+        0
+      ],
+      [
+        "Guest house",
+        1
+      ],
+      [
+        "Room key",
+        1
+      ],
+      [
+        "Half board",
+        1
+      ],
+      [
+        "Passport",
+        2
+      ],
+      [
+        "Visa",
+        2
+      ],
+      [
+        "Travel insurance",
+        2
+      ]
+    ]
+  },
+  {
+    "id": "health-wheel",
+    "title": "Healthy Lifestyle",
+    "type": "Spin the wheel",
+    "topic": "Health",
+    "cover": "leaf",
+    "kind": "wheel",
+    "intro": "Spin, then talk for a minute on whatever comes up.",
+    "prompts": [
+      "What did you eat yesterday? Would you change any of it?",
+      "How many hours do you sleep, and how many do you need?",
+      "Describe your ideal week of exercise.",
+      "Name one habit you would like to drop, and why.",
+      "How do you wind down after a difficult day?",
+      "What does a balanced meal look like to you?",
+      "Which is harder to change: what you eat or how you move?",
+      "How much water do you really drink in a day?"
+    ]
+  },
+  {
+    "id": "cities-cards",
+    "title": "City Life",
+    "type": "Speaking cards",
+    "topic": "Cities",
+    "cover": "dusk",
+    "kind": "cards",
+    "intro": "Take a card and answer it in two or three sentences.",
+    "prompts": [
+      "Describe the city you know best in three sentences.",
+      "What makes a city worth living in?",
+      "Would you rather live in the centre or outside it? Why?",
+      "What is the worst thing about traffic where you live?",
+      "Where should a growing city put its new arrivals?",
+      "Which does a city need more: parks or parking?",
+      "What would you change about public transport?",
+      "Do people move to cities for work, for study, or for something else?"
+    ]
   }
 ];
-
-/** Wordwall's own embed player, so the activity runs inside this page. */
-export const wordwallEmbed = (id) => `https://wordwall.net/embed/${id}`;
