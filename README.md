@@ -34,8 +34,8 @@ Edit `assets/js/data.js`. Keep the field names and everything else keeps working
 { id, title, desc, topic, channel, duration }
 // tests — `answer` is the index of the correct option, 0 for A
 { id, title, desc, topic, questions: [{ q, options: [a, b, c, d], answer }] }
-// games — `kind` picks the engine, `cover` picks the card colour
-{ id, title, type, topic, kind, cover, intro, ...engine content }
+// games — `id` is the Wordwall activity hash; the embed URL is built from it
+{ id, title, type, topic, thumb, theme? }
 ```
 
 ## Still open
