@@ -1,0 +1,370 @@
+import { videos, tests, quizzes, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt, wordwallEmbed } from './data.js';
+
+/* ---------------------------------------------------------------
+   State
+   --------------------------------------------------------------- */
+const TABS = {
+  videos:  { title: 'Videos',  sub: 'Short lessons to watch and learn from.' },
+  tests:   { title: 'Tests',   sub: 'Five questions on one topic, scored as soon as you finish.' },
+  quizzes: { title: 'Quizzes', sub: 'Interactive activities that play right here on the page.' },
+};
+
+const state = { tab: 'videos', query: '', topic: 'all', run: null, play: null };
+
+const $  = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+
+const el = (tag, props = {}, children = []) => {
+  const node = Object.assign(document.createElement(tag), props);
+  for (const child of [].concat(children)) {
+    if (child) node.append(child.nodeType ? child : document.createTextNode(child));
+  }
+  return node;
+};
+
+const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+const countOf = (item) => (Array.isArray(item.questions) ? item.questions.length : item.questions);
+
+const icon = (paths, attrs = '') =>
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${attrs}>${paths}</svg>`;
+
+/* ---------------------------------------------------------------
+   Cards
+   --------------------------------------------------------------- */
+function videoCard(item) {
+  const card = el('a', {
+    className: 'card',
+    href: youtubeWatchUrl(item.id),
+    target: '_blank',
+    rel: 'noopener noreferrer',
+  });
+  card.innerHTML = `
+    <div class="card__thumb card__thumb--media">
+      <img class="card__img" src="${youtubeThumb(item.id)}" alt="" loading="lazy"
+           onerror="this.onerror=null;this.src='${youtubeThumbAlt(item.id)}'" />
+      <span class="card__tag">${item.topic}</span>
+      <span class="card__play">${icon('<path d="m9 7 9 5-9 5z" fill="currentColor" stroke="none" />')}</span>
+      <span class="card__badge">${item.duration}</span>
+    </div>
+    <div class="card__body">
+      <h3 class="card__title">${item.title}</h3>
+      <p class="card__desc">${item.desc}</p>
+      <div class="card__meta">
+        <span class="card__channel">${item.channel}</span>
+      </div>
+    </div>`;
+  return card;
+}
+
+function testRow(item) {
+  const row = el('button', { className: 'row', type: 'button' });
+  row.innerHTML = `
+    <span class="row__icon">${icon('<path d="M9 5h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" /><path d="M10 10h4M10 14h4" />')}</span>
+    <span class="row__main">
+      <span class="row__title">${item.title}</span>
+      <span class="row__meta">${item.topic} · ${countOf(item)} questions</span>
+    </span>
+    <span class="row__cta">Start</span>`;
+  row.addEventListener('click', () => startTest(item));
+  return row;
+}
+
+function quizCard(item) {
+  const card = el('button', { className: 'card', type: 'button' });
+  card.innerHTML = `
+    <div class="card__thumb card__thumb--media" style="aspect-ratio:4/3">
+      <img class="card__img" src="${item.thumb}" alt="" loading="lazy" />
+      <span class="card__tag">${item.topic}</span>
+      <span class="card__play">${icon('<path d="m9 7 9 5-9 5z" fill="currentColor" stroke="none" />')}</span>
+    </div>
+    <div class="card__body">
+      <h3 class="card__title">${item.title}</h3>
+      <div class="card__meta">
+        <span class="tag">${item.type}</span>
+      </div>
+    </div>`;
+  card.addEventListener('click', () => startQuiz(item));
+  return card;
+}
+
+/* ---------------------------------------------------------------
+   Render
+   --------------------------------------------------------------- */
+const datasets = { videos, tests, quizzes };
+
+function matches(item) {
+  const q = state.query.trim().toLowerCase();
+  const byQuery = !q || `${item.title} ${item.desc ?? ''} ${item.topic} ${item.channel ?? ''} ${item.type ?? ''}`.toLowerCase().includes(q);
+  const byTopic = state.topic === 'all' || item.topic === state.topic;
+  return byQuery && byTopic;
+}
+
+/** Topics are read from the content itself, so a new entry adds its own chip. */
+const topicsFor = (tab) => [...new Set(datasets[tab].map((item) => item.topic))].sort();
+
+function renderFilters() {
+  const wrap = $('#filters');
+  wrap.replaceChildren();
+  for (const value of ['all', ...topicsFor(state.tab)]) {
+    const chip = el('button', { className: 'chip', type: 'button', textContent: value === 'all' ? 'All topics' : value });
+    chip.setAttribute('aria-pressed', String(state.topic === value));
+    chip.addEventListener('click', () => {
+      state.topic = value;
+      renderFilters();
+      renderContent();
+    });
+    wrap.append(chip);
+  }
+}
+
+function renderContent() {
+  const content = $('#content');
+
+  if (state.play) {
+    content.replaceChildren(renderPlayer());
+    return;
+  }
+
+  if (state.run) {
+    content.replaceChildren(state.run.done ? renderResults() : renderQuestion());
+    return;
+  }
+
+  const items = datasets[state.tab].filter(matches);
+  content.replaceChildren();
+
+  if (!items.length) {
+    content.append(el('div', {
+      className: 'empty',
+      innerHTML: '<strong>Nothing here yet</strong><span>Try another topic or clear the search.</span>',
+    }));
+    return;
+  }
+
+  const grid = el('div', { className: state.tab === 'tests' ? 'grid grid--list' : 'grid' });
+  const build = { videos: videoCard, tests: testRow, quizzes: quizCard }[state.tab];
+  items.forEach((item) => grid.append(build(item)));
+  content.append(grid);
+}
+
+/* ---------------------------------------------------------------
+   Quiz player — the activity runs in the page, nothing navigates away
+   --------------------------------------------------------------- */
+function startQuiz(quiz) {
+  state.play = quiz;
+  renderTab();
+  $('#main').scrollIntoView({ block: 'start' });
+}
+
+function exitQuiz() {
+  state.play = null;
+  renderTab();
+}
+
+function renderPlayer() {
+  const quiz = state.play;
+  const wrap = el('section', { className: 'player' });
+  wrap.innerHTML = `
+    <div class="runner__head">
+      <button class="linkish" type="button" data-exit>${icon('<path d="M15 18l-6-6 6-6" />')} All quizzes</button>
+      <span class="runner__step">${quiz.type}</span>
+    </div>
+    <iframe class="player__frame" src="${wordwallEmbed(quiz.id)}" title="${quiz.title}"
+            allowfullscreen loading="lazy"></iframe>`;
+  $('[data-exit]', wrap).addEventListener('click', exitQuiz);
+  return wrap;
+}
+
+/* ---------------------------------------------------------------
+   Test runner
+   --------------------------------------------------------------- */
+function startTest(test) {
+  state.run = { test, index: 0, answers: Array(test.questions.length).fill(null), done: false };
+  renderTab();
+  $('#main').scrollIntoView({ block: 'start' });
+}
+
+function exitTest() {
+  state.run = null;
+  renderTab();
+}
+
+function answerButton(option, i, chosen) {
+  const btn = el('button', { className: 'opt', type: 'button' });
+  btn.setAttribute('aria-pressed', String(chosen === i));
+  btn.innerHTML = `<span class="opt__letter">${LETTERS[i]}</span><span class="opt__text">${option}</span>`;
+  btn.addEventListener('click', () => {
+    state.run.answers[state.run.index] = i;
+    renderContent();
+  });
+  return btn;
+}
+
+function renderQuestion() {
+  const { test, index, answers } = state.run;
+  const question = test.questions[index];
+  const total = test.questions.length;
+  const last = index === total - 1;
+
+  const wrap = el('section', { className: 'runner' });
+  wrap.innerHTML = `
+    <div class="runner__head">
+      <button class="linkish" type="button" data-exit>${icon('<path d="M15 18l-6-6 6-6" />')} All tests</button>
+      <span class="runner__step">Question ${index + 1} of ${total}</span>
+    </div>
+    <div class="runner__bar"><span style="width:${(index / total) * 100}%"></span></div>
+    <h2 class="runner__q">${question.q}</h2>
+    <div class="runner__options"></div>
+    <div class="runner__actions">
+      <button class="btn" type="button" data-prev ${index === 0 ? 'hidden' : ''}>Back</button>
+      <button class="btn btn--primary" type="button" data-next ${answers[index] === null ? 'disabled' : ''}>
+        ${last ? 'Finish and see results' : 'Next question'}
+      </button>
+    </div>`;
+
+  const options = $('.runner__options', wrap);
+  question.options.forEach((option, i) => options.append(answerButton(option, i, answers[index])));
+
+  $('[data-exit]', wrap).addEventListener('click', exitTest);
+  $('[data-prev]', wrap).addEventListener('click', () => { state.run.index -= 1; renderContent(); });
+  $('[data-next]', wrap).addEventListener('click', () => {
+    if (last) state.run.done = true;
+    else state.run.index += 1;
+    renderContent();
+  });
+  return wrap;
+}
+
+function renderResults() {
+  const { test, answers } = state.run;
+  const total = test.questions.length;
+  const correct = answers.filter((a, i) => a === test.questions[i].answer).length;
+  const wrong = total - correct;
+  const verdict = correct === total ? 'Every answer correct.'
+    : correct >= total / 2 ? 'A solid result. Look over what you missed.'
+    : 'Worth another go once you have reviewed the answers.';
+
+  const wrap = el('section', { className: 'runner' });
+  wrap.innerHTML = `
+    <div class="runner__head">
+      <button class="linkish" type="button" data-exit>${icon('<path d="M15 18l-6-6 6-6" />')} All tests</button>
+    </div>
+
+    <div class="score">
+      <div class="score__ring" style="--pct:${(correct / total) * 100}">
+        <span class="score__num">${correct}<small>/${total}</small></span>
+      </div>
+      <div class="score__side">
+        <p class="score__line"><span class="score__dot score__dot--ok"></span>${correct} correct</p>
+        <p class="score__line"><span class="score__dot score__dot--no"></span>${wrong} wrong</p>
+        <p class="score__verdict">${verdict}</p>
+      </div>
+    </div>
+
+    <ol class="review"></ol>
+
+    <div class="runner__actions">
+      <button class="btn" type="button" data-retry>Try again</button>
+      <button class="btn btn--primary" type="button" data-exit>Back to tests</button>
+    </div>`;
+
+  const list = $('.review', wrap);
+  test.questions.forEach((question, i) => {
+    const given = answers[i];
+    const ok = given === question.answer;
+    const item = el('li', { className: `review__item ${ok ? 'is-ok' : 'is-no'}` });
+    item.innerHTML = `
+      <span class="review__mark">${ok
+        ? icon('<path d="M20 6L9 17l-5-5" />')
+        : icon('<path d="M6 6l12 12M18 6L6 18" />')}</span>
+      <div class="review__body">
+        <p class="review__q">${question.q}</p>
+        <p class="review__answer">
+          <span class="review__label">Your answer</span>
+          ${given === null ? '<em>Not answered</em>' : `${LETTERS[given]}. ${question.options[given]}`}
+        </p>
+        ${ok ? '' : `<p class="review__answer review__answer--right">
+          <span class="review__label">Correct answer</span>
+          ${LETTERS[question.answer]}. ${question.options[question.answer]}
+        </p>`}
+      </div>`;
+    list.append(item);
+  });
+
+  $$('[data-exit]', wrap).forEach((b) => b.addEventListener('click', exitTest));
+  $('[data-retry]', wrap).addEventListener('click', () => startTest(test));
+  return wrap;
+}
+
+function moveIndicator() {
+  const active = $('.tab[aria-selected="true"]');
+  const indicator = $('.tabs__indicator');
+  if (!active || !indicator) return;
+  indicator.style.width = `${active.offsetWidth}px`;
+  indicator.style.transform = `translateX(${active.offsetLeft}px)`;
+}
+
+function renderTab() {
+  const meta = TABS[state.tab];
+  const run = state.run;
+  const play = state.play;
+  const focused = Boolean(run || play);
+
+  $('#page-title').textContent = play ? play.title : run ? run.test.title : meta.title;
+  $('#page-sub').textContent = play ? play.topic
+    : run ? `${run.test.topic} · ${countOf(run.test)} questions`
+    : meta.sub;
+  document.title = `${play ? play.title : run ? run.test.title : meta.title} — English Media Lab`;
+
+  $$('.tab').forEach((tab) => tab.setAttribute('aria-selected', String(tab.dataset.tab === state.tab)));
+  moveIndicator();
+
+  $('#filters').hidden = focused;
+  $('.search').hidden = focused;
+  if (!focused) renderFilters();
+  renderContent();
+}
+
+function setTab(tab, { pushHash = true } = {}) {
+  if (!TABS[tab] || tab === state.tab) return;
+  state.tab = tab;
+  state.topic = 'all';
+  state.run = null;
+  state.play = null;
+  if (pushHash) location.hash = `#/${tab}`;
+  renderTab();
+}
+
+/* ---------------------------------------------------------------
+   Wiring
+   --------------------------------------------------------------- */
+function init() {
+  $$('.tab').forEach((tab) => {
+    tab.addEventListener('click', () => setTab(tab.dataset.tab));
+    tab.addEventListener('keydown', (e) => {
+      const order = Object.keys(TABS);
+      const i = order.indexOf(state.tab);
+      if (e.key === 'ArrowRight') { setTab(order[(i + 1) % order.length]); $('.tab[aria-selected="true"]').focus(); }
+      if (e.key === 'ArrowLeft')  { setTab(order[(i - 1 + order.length) % order.length]); $('.tab[aria-selected="true"]').focus(); }
+    });
+  });
+
+  $('#search').addEventListener('input', (e) => {
+    state.query = e.target.value;
+    renderContent();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && (state.run || state.play)) { state.run = null; state.play = null; renderTab(); }
+  });
+
+  addEventListener('hashchange', () => setTab(location.hash.replace('#/', '') || 'videos', { pushHash: false }));
+  addEventListener('resize', moveIndicator);
+
+  const initial = location.hash.replace('#/', '');
+  state.tab = TABS[initial] ? initial : 'videos';
+  renderTab();
+  requestAnimationFrame(moveIndicator);
+}
+
+init();
