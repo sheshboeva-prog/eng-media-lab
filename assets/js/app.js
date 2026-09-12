@@ -187,11 +187,7 @@ function hero() {
       EnglishMediaLab is an interactive platform designed to help students improve
       their English through videos, tests, and educational games.
     </p>
-    <div class="hero__actions">
-      <button class="btn btn--primary" type="button" data-go="videos">Start watching</button>
-      <button class="btn" type="button" data-go="tests">Take a test</button>
-    </div>`;
-  $$('[data-go]', node).forEach((b) => b.addEventListener('click', () => setTab(b.dataset.go)));
+`;
   return node;
 }
 
@@ -430,7 +426,7 @@ function wheelGame(game) {
 
   const ctx = wheel.getContext('2d');
   const read = (token) => getComputedStyle(document.documentElement).getPropertyValue(token).trim();
-  const tints = [read('--vanilla'), read('--cream-deep'), read('--vanilla-deep'), read('--vanilla-soft')];
+  const tints = [read('--gold'), read('--paper-deep'), read('--gold-deep'), read('--gold-soft')];
 
   const paint = (turn) => {
     const r = size;
@@ -453,7 +449,7 @@ function wheelGame(game) {
 
       ctx.save();
       ctx.rotate((a0 + a1) / 2);
-      ctx.fillStyle = '#2b2107';
+      ctx.fillStyle = '#2a2007';
       ctx.font = '600 34px -apple-system, system-ui, sans-serif';
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';

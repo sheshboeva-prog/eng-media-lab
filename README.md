@@ -22,9 +22,10 @@ Then open http://localhost:5173. A server is needed because the JS uses ES modul
 | `assets/img/` | Public-domain photographs used by the picture games |
 | `serve.py` | Dev server that sends `Cache-Control: no-store` so edits show on reload |
 
-The palette is cream and vanilla, defined at the top of the stylesheet as `--cream`,
-`--cream-deep`, `--vanilla`, `--vanilla-deep` and `--vanilla-soft`. Changing those
-five values reskins the whole site. There is one theme only, no dark mode.
+The palette is ink navy and gold on paper, defined at the top of the stylesheet as
+`--paper`, `--paper-deep`, `--gold`, `--gold-deep`, `--gold-soft` and `--accent`.
+Changing those six values reskins the whole site. There is one theme only, no dark
+mode.
 
 ## Adding content
 
@@ -51,7 +52,8 @@ time, and finishing shows a score with every question marked right or wrong and 
 correct answer next to each miss.
 
 Home opens with the welcome text, then three cards carrying the author's
-description of each section, then the "How to learn" note. The house
+description of each section, then the "How to learn" line. There are no buttons in
+the hero: the cards are the way in. The house
 button in the header is the only navigation control, marked in vanilla while you
 are on it. The page carries three cards leading into the sections,
 then the first three videos, tests and quizzes with a link through to each full list.
