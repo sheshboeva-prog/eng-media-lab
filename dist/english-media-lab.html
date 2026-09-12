@@ -641,6 +641,13 @@ img, svg { display: block; max-width: 100%; }
    --------------------------------------------------------------- */
 .player { max-width: 900px; }
 
+.player__note {
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.player__note a { color: var(--accent); text-underline-offset: 2px; }
+
 .player__frame {
   display: block;
   width: 100%;
@@ -653,7 +660,14 @@ img, svg { display: block; max-width: 100%; }
 }
 
 @media (max-width: 640px) {
-  .player__frame { height: min(70vh, 520px); }
+  .player__note {
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.player__note a { color: var(--accent); text-underline-offset: 2px; }
+
+.player__frame { height: min(70vh, 520px); }
 }
 
 /* ---------------------------------------------------------------
@@ -1639,6 +1653,7 @@ const tests = [
 const games = [
   {
     "id": "af29c2c07ec648b48296b9fd30a977f1",
+    "link": "https://wordwall.net/resource/55260016",
     "title": "Environment",
     "type": "Match up",
     "topic": "Environment",
@@ -1646,6 +1661,7 @@ const games = [
   },
   {
     "id": "24d610bb510648179521b7a35af27325",
+    "link": "https://wordwall.net/resource/74671025",
     "title": "Urbanization",
     "type": "Speaking cards",
     "topic": "Cities",
@@ -1653,6 +1669,7 @@ const games = [
   },
   {
     "id": "3f485e56e2d94290aaa88462ba922aee",
+    "link": "https://wordwall.net/resource/25467152",
     "title": "Social Media (+ & -)",
     "type": "Group sort",
     "topic": "Wellbeing",
@@ -1660,6 +1677,7 @@ const games = [
   },
   {
     "id": "0ad59e2e4ee147fcab4b0e08309f620f",
+    "link": "https://wordwall.net/ru/resource/2069497",
     "title": "healthy lifestyle",
     "type": "Random wheel",
     "topic": "Health",
@@ -1667,6 +1685,7 @@ const games = [
   },
   {
     "id": "d643d23e79964369af6fa0a84f0dcf33",
+    "link": "https://wordwall.net/ru/resource/8761964",
     "title": "Travelling and Transport",
     "type": "Group sort",
     "topic": "Travel",
@@ -1674,6 +1693,7 @@ const games = [
   },
   {
     "id": "b5277c5cbf7a41e7be4d8fc2ac591410",
+    "link": "https://wordwall.net/ru/resource/24688773",
     "title": "Business Result Pre Unit 4",
     "type": "Match up",
     "topic": "Business",
@@ -1964,7 +1984,11 @@ function renderPlayer() {
       <span class="runner__step">${game.type}</span>
     </div>
     <iframe class="player__frame" src="${wordwallEmbed(game.id, game.theme)}" title="${game.title}"
-            allowfullscreen loading="lazy"></iframe>`;
+            allowfullscreen loading="lazy"></iframe>
+    <p class="player__note">
+      Nothing showing? Some hosts block embedded games.
+      <a href="${game.link}" target="_blank" rel="noopener noreferrer">Open this one on Wordwall</a>.
+    </p>`;
   $('[data-exit]', wrap).addEventListener('click', exitGame);
   return wrap;
 }

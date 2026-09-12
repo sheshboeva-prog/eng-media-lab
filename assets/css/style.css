@@ -630,6 +630,13 @@ img, svg { display: block; max-width: 100%; }
    --------------------------------------------------------------- */
 .player { max-width: 900px; }
 
+.player__note {
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.player__note a { color: var(--accent); text-underline-offset: 2px; }
+
 .player__frame {
   display: block;
   width: 100%;
@@ -642,7 +649,14 @@ img, svg { display: block; max-width: 100%; }
 }
 
 @media (max-width: 640px) {
-  .player__frame { height: min(70vh, 520px); }
+  .player__note {
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.player__note a { color: var(--accent); text-underline-offset: 2px; }
+
+.player__frame { height: min(70vh, 520px); }
 }
 
 /* ---------------------------------------------------------------

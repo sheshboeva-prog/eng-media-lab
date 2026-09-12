@@ -660,6 +660,7 @@ export const tests = [
 export const games = [
   {
     "id": "af29c2c07ec648b48296b9fd30a977f1",
+    "link": "https://wordwall.net/resource/55260016",
     "title": "Environment",
     "type": "Match up",
     "topic": "Environment",
@@ -667,6 +668,7 @@ export const games = [
   },
   {
     "id": "24d610bb510648179521b7a35af27325",
+    "link": "https://wordwall.net/resource/74671025",
     "title": "Urbanization",
     "type": "Speaking cards",
     "topic": "Cities",
@@ -674,6 +676,7 @@ export const games = [
   },
   {
     "id": "3f485e56e2d94290aaa88462ba922aee",
+    "link": "https://wordwall.net/resource/25467152",
     "title": "Social Media (+ & -)",
     "type": "Group sort",
     "topic": "Wellbeing",
@@ -681,6 +684,7 @@ export const games = [
   },
   {
     "id": "0ad59e2e4ee147fcab4b0e08309f620f",
+    "link": "https://wordwall.net/ru/resource/2069497",
     "title": "healthy lifestyle",
     "type": "Random wheel",
     "topic": "Health",
@@ -688,6 +692,7 @@ export const games = [
   },
   {
     "id": "d643d23e79964369af6fa0a84f0dcf33",
+    "link": "https://wordwall.net/ru/resource/8761964",
     "title": "Travelling and Transport",
     "type": "Group sort",
     "topic": "Travel",
@@ -695,6 +700,7 @@ export const games = [
   },
   {
     "id": "b5277c5cbf7a41e7be4d8fc2ac591410",
+    "link": "https://wordwall.net/ru/resource/24688773",
     "title": "Business Result Pre Unit 4",
     "type": "Match up",
     "topic": "Business",

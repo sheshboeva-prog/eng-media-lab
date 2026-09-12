@@ -269,7 +269,11 @@ function renderPlayer() {
       <span class="runner__step">${game.type}</span>
     </div>
     <iframe class="player__frame" src="${wordwallEmbed(game.id, game.theme)}" title="${game.title}"
-            allowfullscreen loading="lazy"></iframe>`;
+            allowfullscreen loading="lazy"></iframe>
+    <p class="player__note">
+      Nothing showing? Some hosts block embedded games.
+      <a href="${game.link}" target="_blank" rel="noopener noreferrer">Open this one on Wordwall</a>.
+    </p>`;
   $('[data-exit]', wrap).addEventListener('click', exitGame);
   return wrap;
 }
