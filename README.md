@@ -99,7 +99,7 @@ The footer carries the authorship and rights notice. The name appears twice in
 
 ## Rights
 
-© 2026 Ramazon Komilov. The site, its texts, tests and games are the author's work
+© 2026 Eshboyeva Shoira. The site, its texts, tests and games are the author's work
 and may not be copied, republished or reused without written permission. The linked
 videos belong to the channels that made them. The photographs in `assets/img/` are
 public domain.
