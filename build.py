@@ -43,6 +43,15 @@ def as_data_uri(url, name):
     return 'data:image/jpeg;base64,' + base64.b64encode(raw).decode()
 
 
+def inline_local(js):
+    """Swap every assets/img/... path for the picture itself."""
+    for path in sorted(set(re.findall(r'assets/img/[\w.-]+', js))):
+        with open(os.path.join(ROOT, path), 'rb') as f:
+            raw = f.read()
+        js = js.replace(path, 'data:image/jpeg;base64,' + base64.b64encode(raw).decode())
+    return js
+
+
 def inline_images(js):
     """Swap the two thumbnail helpers and the quiz `thumb` fields for data URIs."""
     ids = re.findall(r"id: '([\w-]{11})'", js)
@@ -50,15 +59,12 @@ def inline_images(js):
     js = re.sub(r"export const youtubeThumb\s*=.*\n", 'export const youtubeThumb = (id) => THUMBS[id];\n', js)
     js = re.sub(r"export const youtubeThumbAlt\s*=.*\n", 'export const youtubeThumbAlt = (id) => THUMBS[id];\n', js)
     js = 'const THUMBS = ' + json.dumps(table) + ';\n\n' + js
-
-    for url in set(re.findall(r'"(https://screens\.cdn\.wordwall\.net/[^"]+)"', js)):
-        js = js.replace(url, as_data_uri(url, 'ww_' + url.split('/')[-1] + '.jpg'))
     return js
 
 
 data, app = read('assets', 'js', 'data.js'), read('assets', 'js', 'app.js')
 if INLINE:
-    data = inline_images(data)
+    data = inline_local(inline_images(data))
 
 # one classic script: data.js first, with the import that joined them removed.
 # Classic rather than a module so the file also works opened straight from disk.

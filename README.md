@@ -19,6 +19,7 @@ Then open http://localhost:5173. A server is needed because the JS uses ES modul
 | `assets/js/app.js` | Tab routing, home page, search, filters, test runner, quiz player |
 | `assets/css/style.css` | Design tokens and all styling; Newsreader for headings, system stack for text |
 | `assets/js/data.js` | All content: ten videos, ten tests, six games |
+| `assets/img/` | Public-domain photographs used by the picture games |
 | `serve.py` | Dev server that sends `Cache-Control: no-store` so edits show on reload |
 
 The palette is cream and vanilla, defined at the top of the stylesheet as `--cream`,
@@ -58,9 +59,15 @@ Sections are reached from home, and the house button brings you back from anywhe
 including out of a running test or quiz. Every section still has its own address
 (`#/videos`, `#/tests`, `#/games`), so links into them keep working.
 
-Games are done: six Wordwall activities. The activity loads in an iframe on the
-Games tab, so nothing navigates away from the site, and every word inside is the
-author's original. The iframe is created only when a quiz is opened.
+Games are done: six activities built into the site, nothing embedded and nothing
+fetched. `kind` picks the engine — `match` (pair a word with its meaning, or with a
+photograph when `pictures` is true), `sort` (drop each card into its group, with or
+without photographs), `wheel` (spin for a speaking prompt, drawn on a canvas) and
+`cards` (a shuffled deck of prompts).
+
+The fifteen photographs in `assets/img/` are public domain, found through Openverse
+and cropped to 480x360. They need no credit line. `build.py --inline-images` embeds
+them in the single-file build alongside the video thumbnails.
 
 The filter chips are built from the `topic` values in the active tab, so adding an
 entry with a new topic adds its chip automatically. There are no CEFR levels.
