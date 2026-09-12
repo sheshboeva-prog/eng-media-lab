@@ -1182,13 +1182,35 @@ img, svg { display: block; max-width: 100%; }
   font-size: 13px;
 }
 .footer__inner {
+  display: grid;
+  gap: 10px;
+}
+.footer__line {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 8px;
+  align-items: baseline;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
 }
-.footer__name { color: var(--text); font-weight: 600; letter-spacing: -.01em; }
+.footer__name {
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
 .footer__by { font-style: italic; }
+.footer__rights {
+  max-width: 74ch;
+  line-height: 1.6;
+}
+.footer__credits {
+  max-width: 74ch;
+  font-size: 12px;
+  line-height: 1.55;
+  opacity: .8;
+}
 
 /* ---------------------------------------------------------------
    Responsive
@@ -1254,8 +1276,18 @@ img, svg { display: block; max-width: 100%; }
 
   <footer class="footer">
     <div class="footer__inner">
-      <span class="footer__name">EnglishMediaLab</span>
-      <span class="footer__by">By Author</span>
+      <div class="footer__line">
+        <span class="footer__name">EnglishMediaLab</span>
+        <span class="footer__by">by Ramazon Komilov</span>
+      </div>
+      <p class="footer__rights">
+        &copy; 2026 Ramazon Komilov. All rights reserved. The texts, tests and games on
+        this site are the author's own work. They may not be copied, republished or
+        reused, in whole or in part, without the author's written permission.
+      </p>
+      <p class="footer__credits">
+        Videos remain the property of the channels that made them. Photographs are public domain.
+      </p>
     </div>
   </footer>
 

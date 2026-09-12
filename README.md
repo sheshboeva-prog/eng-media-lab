@@ -94,4 +94,12 @@ two later. To update it, commit and push again.
 
 `.nojekyll` is there so Pages serves the files untouched.
 
-The footer credit reads "By Author" — replace it in `index.html` with a real name.
+The footer carries the authorship and rights notice. The name appears twice in
+`index.html`, in `footer__by` and in the copyright line; change both together.
+
+## Rights
+
+© 2026 Ramazon Komilov. The site, its texts, tests and games are the author's work
+and may not be copied, republished or reused without written permission. The linked
+videos belong to the channels that made them. The photographs in `assets/img/` are
+public domain.
