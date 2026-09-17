@@ -71,10 +71,10 @@ if INLINE:
 script = re.sub(r'^export ', '', data, flags=re.M) + '\n' + re.sub(r"^import .*?from '\./data\.js';\n", '', app, flags=re.M | re.S)
 
 html = read('index.html')
-html = html.replace('  <link rel="stylesheet" href="assets/css/style.css" />\n',
-                    '  <style>\n' + read('assets', 'css', 'style.css') + '  </style>\n')
-html = html.replace('  <script type="module" src="assets/js/app.js"></script>\n',
-                    '  <script>\n' + script + '  </script>\n')
+html = re.sub(r'  <link rel="stylesheet" href="assets/css/style\.css[^"]*" />\n',
+                    lambda _m: '  <style>\n' + read('assets', 'css', 'style.css') + '  </style>\n', html)
+html = re.sub(r'  <script type="module" src="assets/js/app\.js[^"]*"></script>\n',
+                    lambda _m: '  <script>\n' + script + '  </script>\n', html)
 
 os.makedirs(os.path.join(ROOT, 'dist'), exist_ok=True)
 out = os.path.join(ROOT, 'dist', 'english-media-lab.html')

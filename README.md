@@ -83,6 +83,10 @@ them in the single-file build alongside the video thumbnails.
 The filter chips are built from the `topic` values in the active tab, so adding an
 entry with a new topic adds its chip automatically. There are no CEFR levels.
 
+Bump the `?v=` on the stylesheet and script links in `index.html` whenever either
+changes. Pages caches assets for several minutes, and without a new URL returning
+visitors keep the old file until that expires.
+
 ## Publishing to GitHub Pages
 
 The site is plain static files, so Pages serves it as-is. Every path is relative,
