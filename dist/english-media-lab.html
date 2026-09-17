@@ -31,6 +31,9 @@
   --accent:        #163a54;
   --accent-soft:   var(--gold-soft);
   --accent-text:   #fffdf9;
+  --c-videos: #1d5c80;
+  --c-tests:  #1f6b46;
+  --c-games:  #bd8a22;
   --ok:   #1f6b46;
   --no:   #9e3826;
   --shadow-sm: 0 1px 2px rgba(20, 32, 43, .06);
@@ -57,11 +60,6 @@ html { -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
-  background-image:
-    radial-gradient(64% 40% at 10% -8%, rgba(221, 169, 63, .18), transparent 70%),
-    radial-gradient(46% 30% at 94% -12%, rgba(22, 58, 84, .07), transparent 72%);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
   font-family: var(--font);
   font-size: 15px;
   line-height: 1.55;
@@ -74,6 +72,27 @@ body {
 h1, h2, h3, p { margin: 0; }
 button, input { font: inherit; color: inherit; }
 img, svg { display: block; max-width: 100%; }
+
+/* a slow wash of colour behind everything */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -22vmax;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(34vmax 27vmax at 14% 6%,  rgba(221, 169, 63, .40), transparent 63%),
+    radial-gradient(32vmax 26vmax at 86% 2%,  rgba(29, 92, 128, .28), transparent 64%),
+    radial-gradient(30vmax 25vmax at 78% 74%, rgba(31, 107, 70, .24), transparent 66%),
+    radial-gradient(26vmax 22vmax at 16% 88%, rgba(189, 138, 34, .24), transparent 66%);
+  animation: drift 32s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(2.5%, -2%, 0) scale(1.07); }
+  100% { transform: translate3d(-2%, 2.5%, 0) scale(1.03); }
+}
 [hidden] { display: none !important; }
 
 :focus-visible {
@@ -203,6 +222,23 @@ img, svg { display: block; max-width: 100%; }
 .main { padding: 26px 0 56px; }
 
 .page-head { margin-bottom: 20px; }
+.page-head__title::before {
+  content: "";
+  display: block;
+  width: 34px;
+  height: 3px;
+  margin-bottom: 12px;
+  border-radius: 2px;
+  background: var(--hue, var(--accent));
+  animation: widen .5s var(--ease) both;
+}
+body[data-section="videos"] { --hue: var(--c-videos); }
+body[data-section="tests"]  { --hue: var(--c-tests); }
+body[data-section="games"]  { --hue: var(--c-games); }
+
+@keyframes widen {
+  from { width: 0; opacity: 0; }
+}
 .page-head__title {
   font-family: var(--font-display);
   font-size: clamp(27px, 3.6vw, 34px);
@@ -522,8 +558,15 @@ img, svg { display: block; max-width: 100%; }
   cursor: pointer;
   transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .2s;
 }
+.section { --hue: var(--accent); }
+.section--videos { --hue: var(--c-videos); }
+.section--tests  { --hue: var(--c-tests); }
+.section--games  { --hue: var(--c-games); }
+.section:hover .section__arrow { color: var(--hue); }
+
 .section:hover {
   transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--hue) 35%, var(--border));
   box-shadow: var(--shadow-md);
   border-color: var(--border-strong);
 }
@@ -541,8 +584,8 @@ img, svg { display: block; max-width: 100%; }
   width: 38px;
   height: 38px;
   border-radius: 11px;
-  background: var(--gold-soft);
-  border: 1px solid var(--gold-deep);
+  background: color-mix(in srgb, var(--hue) 13%, #fff);
+  border: 1px solid color-mix(in srgb, var(--hue) 45%, transparent);
   font-size: 18px;
   line-height: 1;
 }
@@ -572,7 +615,7 @@ img, svg { display: block; max-width: 100%; }
   margin-top: auto;
   padding-top: 12px;
   border-top: 1px solid var(--border);
-  color: var(--text-muted);
+  color: var(--hue);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: .11em;
@@ -738,6 +781,7 @@ img, svg { display: block; max-width: 100%; }
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 7%, var(--surface));
 }
+.match__item.is-done { animation: popIn .34s var(--ease); }
 .match__item.is-done {
   background: var(--paper-deep);
   border-color: transparent;
@@ -926,6 +970,31 @@ img, svg { display: block; max-width: 100%; }
 }
 .speak.is-in { animation: liftIn .34s var(--ease); }
 
+/* content settles in when a section is opened */
+.is-enter > * { animation: riseIn .42s var(--ease) both; }
+.is-enter .grid > *,
+.is-enter .sections > * { animation: riseIn .5s var(--ease) both; }
+.is-enter .grid > *:nth-child(2),  .is-enter .sections > *:nth-child(2)  { animation-delay: .06s; }
+.is-enter .grid > *:nth-child(3),  .is-enter .sections > *:nth-child(3)  { animation-delay: .12s; }
+.is-enter .grid > *:nth-child(4)  { animation-delay: .18s; }
+.is-enter .grid > *:nth-child(5)  { animation-delay: .22s; }
+.is-enter .grid > *:nth-child(6)  { animation-delay: .26s; }
+.is-enter .grid > *:nth-child(7)  { animation-delay: .30s; }
+.is-enter .grid > *:nth-child(8)  { animation-delay: .33s; }
+.is-enter .grid > *:nth-child(9)  { animation-delay: .36s; }
+.is-enter .grid > *:nth-child(n+10) { animation-delay: .39s; }
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes popIn {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-4px); }
@@ -1076,8 +1145,15 @@ img, svg { display: block; max-width: 100%; }
   box-shadow: var(--shadow-sm);
 }
 
+@property --pct {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: false;
+}
+
 .score__ring {
   position: relative;
+  transition: --pct 1.1s var(--ease);
   flex: none;
   display: grid;
   place-items: center;
@@ -2298,21 +2374,30 @@ function renderFilters() {
   }
 }
 
+function replay(node) {
+  node.classList.remove('is-enter');
+  void node.offsetWidth;
+  node.classList.add('is-enter');
+}
+
 function renderContent() {
   const content = $('#content');
 
   if (state.play) {
     content.replaceChildren(renderPlayer());
+    replay(content);
     return;
   }
 
   if (state.run) {
     content.replaceChildren(state.run.done ? renderResults() : renderQuestion());
+    replay(content);
     return;
   }
 
   if (state.tab === 'home') {
     content.replaceChildren(renderHome());
+    replay(content);
     return;
   }
 
@@ -2324,6 +2409,7 @@ function renderContent() {
       className: 'empty',
       innerHTML: '<strong>Nothing here yet</strong><span>Try another topic or clear the search.</span>',
     }));
+    replay(content);
     return;
   }
 
@@ -2331,6 +2417,7 @@ function renderContent() {
   const build = { videos: videoCard, tests: testRow, games: gameCard }[state.tab];
   items.forEach((item) => grid.append(build(item)));
   content.append(grid);
+  replay(content);
 }
 
 /* ---------------------------------------------------------------
@@ -2370,7 +2457,7 @@ function hero() {
 }
 
 function sectionCard({ tab, label, unit, blurb, mark }) {
-  const card = el('button', { className: 'section', type: 'button' });
+  const card = el('button', { className: `section section--${tab}`, type: 'button' });
   card.innerHTML = `
     <span class="section__top">
       <span class="section__icon" aria-hidden="true">${mark}</span>
@@ -2803,8 +2890,8 @@ function renderResults() {
     </div>
 
     <div class="score">
-      <div class="score__ring" style="--pct:${(correct / total) * 100}">
-        <span class="score__num">${correct}<small>/${total}</small></span>
+      <div class="score__ring" style="--pct:0">
+        <span class="score__num"><span data-count>0</span><small>/${total}</small></span>
       </div>
       <div class="score__side">
         <p class="score__line"><span class="score__dot score__dot--ok"></span>${correct} correct</p>
@@ -2845,6 +2932,22 @@ function renderResults() {
 
   $$('[data-exit]', wrap).forEach((b) => b.addEventListener('click', exitTest));
   $('[data-retry]', wrap).addEventListener('click', () => startTest(test));
+
+  // fill the ring and run the number up to the score
+  const ring = $('.score__ring', wrap);
+  const number = $('[data-count]', wrap);
+  requestAnimationFrame(() => {
+    ring.style.setProperty('--pct', (correct / total) * 100);
+    const started = performance.now();
+    const step = (now) => {
+      const t = Math.min((now - started) / 900, 1);
+      number.textContent = Math.round(correct * (1 - Math.pow(1 - t, 3)));
+      if (t < 1) requestAnimationFrame(step);
+      else number.textContent = correct;
+    };
+    if (correct) requestAnimationFrame(step);
+  });
+
   return wrap;
 }
 
@@ -2864,6 +2967,7 @@ function renderTab() {
   const atHome = state.tab === 'home' && !run && !play;
   $('#home-btn').setAttribute('aria-current', atHome ? 'page' : 'false');
 
+  document.body.dataset.section = state.tab;
   $('#page-head').hidden = atHome;
   $('#filters').hidden = focused;
   $('.search').hidden = focused;

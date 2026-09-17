@@ -120,21 +120,30 @@ function renderFilters() {
   }
 }
 
+function replay(node) {
+  node.classList.remove('is-enter');
+  void node.offsetWidth;
+  node.classList.add('is-enter');
+}
+
 function renderContent() {
   const content = $('#content');
 
   if (state.play) {
     content.replaceChildren(renderPlayer());
+    replay(content);
     return;
   }
 
   if (state.run) {
     content.replaceChildren(state.run.done ? renderResults() : renderQuestion());
+    replay(content);
     return;
   }
 
   if (state.tab === 'home') {
     content.replaceChildren(renderHome());
+    replay(content);
     return;
   }
 
@@ -146,6 +155,7 @@ function renderContent() {
       className: 'empty',
       innerHTML: '<strong>Nothing here yet</strong><span>Try another topic or clear the search.</span>',
     }));
+    replay(content);
     return;
   }
 
@@ -153,6 +163,7 @@ function renderContent() {
   const build = { videos: videoCard, tests: testRow, games: gameCard }[state.tab];
   items.forEach((item) => grid.append(build(item)));
   content.append(grid);
+  replay(content);
 }
 
 /* ---------------------------------------------------------------
@@ -192,7 +203,7 @@ function hero() {
 }
 
 function sectionCard({ tab, label, unit, blurb, mark }) {
-  const card = el('button', { className: 'section', type: 'button' });
+  const card = el('button', { className: `section section--${tab}`, type: 'button' });
   card.innerHTML = `
     <span class="section__top">
       <span class="section__icon" aria-hidden="true">${mark}</span>
@@ -625,8 +636,8 @@ function renderResults() {
     </div>
 
     <div class="score">
-      <div class="score__ring" style="--pct:${(correct / total) * 100}">
-        <span class="score__num">${correct}<small>/${total}</small></span>
+      <div class="score__ring" style="--pct:0">
+        <span class="score__num"><span data-count>0</span><small>/${total}</small></span>
       </div>
       <div class="score__side">
         <p class="score__line"><span class="score__dot score__dot--ok"></span>${correct} correct</p>
@@ -667,6 +678,22 @@ function renderResults() {
 
   $$('[data-exit]', wrap).forEach((b) => b.addEventListener('click', exitTest));
   $('[data-retry]', wrap).addEventListener('click', () => startTest(test));
+
+  // fill the ring and run the number up to the score
+  const ring = $('.score__ring', wrap);
+  const number = $('[data-count]', wrap);
+  requestAnimationFrame(() => {
+    ring.style.setProperty('--pct', (correct / total) * 100);
+    const started = performance.now();
+    const step = (now) => {
+      const t = Math.min((now - started) / 900, 1);
+      number.textContent = Math.round(correct * (1 - Math.pow(1 - t, 3)));
+      if (t < 1) requestAnimationFrame(step);
+      else number.textContent = correct;
+    };
+    if (correct) requestAnimationFrame(step);
+  });
+
   return wrap;
 }
 
@@ -686,6 +713,7 @@ function renderTab() {
   const atHome = state.tab === 'home' && !run && !play;
   $('#home-btn').setAttribute('aria-current', atHome ? 'page' : 'false');
 
+  document.body.dataset.section = state.tab;
   $('#page-head').hidden = atHome;
   $('#filters').hidden = focused;
   $('.search').hidden = focused;

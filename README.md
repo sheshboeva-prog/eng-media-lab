@@ -25,7 +25,13 @@ Then open http://localhost:5173. A server is needed because the JS uses ES modul
 The palette is ink navy and gold on paper, defined at the top of the stylesheet as
 `--paper`, `--paper-deep`, `--gold`, `--gold-deep`, `--gold-soft` and `--accent`.
 Changing those six values reskins the whole site. There is one theme only, no dark
-mode.
+mode. Behind everything sits a fixed wash of four coloured gradients that drifts
+slowly; `--c-videos`, `--c-tests` and `--c-games` give each section its own colour,
+which shows on the home cards and as the rule above each section heading.
+
+Motion: content rises in when a section opens, cards follow in a short stagger, a
+matched pair pops, and the score ring fills while the number counts up. Everything
+stops for `prefers-reduced-motion`.
 
 ## Adding content
 
