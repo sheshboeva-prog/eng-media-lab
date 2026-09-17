@@ -25,12 +25,11 @@ Then open http://localhost:5173. A server is needed because the JS uses ES modul
 The palette is ink navy and gold on paper, defined at the top of the stylesheet as
 `--paper`, `--paper-deep`, `--gold`, `--gold-deep`, `--gold-soft` and `--accent`.
 Changing those six values reskins the whole site. There is one theme only, no dark
-mode. Behind everything sit two fixed layers of coloured gradients: five pools of gold,
-blue, green, coral and violet that drift, and three more of teal, amber and violet
-that turn slowly while their hue cycles, so the ground never looks the same twice.
-Cards sit on them at ninety per cent opacity with a light blur, which lets the
-colour through without touching legibility. `--c-videos`, `--c-tests` and `--c-games` give each section its own colour,
-which shows on the home cards and as the rule above each section heading.
+mode. Behind everything sits one still gradient of the brand blue, top-heavy and faint.
+The palette is deliberately short: deep blue carries every heading, control and
+marker, amber appears only on the game covers, and the rest is white and blue-grey.
+Green and red are kept for right and wrong answers alone. `--c-videos`, `--c-tests` and `--c-games` all point at the accent, so every section
+reads in the same blue; give one of them its own value to colour that section apart.
 
 Motion: content rises in when a section opens, cards follow in a short stagger, a
 matched pair pops, and the score ring fills while the number counts up. Everything

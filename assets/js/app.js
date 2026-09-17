@@ -171,17 +171,20 @@ function renderContent() {
    --------------------------------------------------------------- */
 const SECTIONS = [
   {
-    tab: 'videos', label: 'Videos', unit: 'lessons', mark: '🎥',
+    tab: 'videos', label: 'Videos', unit: 'lessons',
+    glyph: '<rect x="3" y="5" width="18" height="14" rx="2" /><path d="m10 9.5 5 2.5-5 2.5z" />',
     blurb: 'Watch short English-language videos on different topics. Listen carefully '
          + 'and focus on the main ideas, key information, and new vocabulary.',
   },
   {
-    tab: 'tests', label: 'Tests', unit: 'topics', mark: '📝',
+    tab: 'tests', label: 'Tests', unit: 'topics',
+    glyph: '<path d="M9 4h6a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" /><path d="M10 10h4M10 14h4" />',
     blurb: 'Check your understanding after watching the videos. Answer the questions '
          + 'and test your English knowledge, comprehension, and analytical skills.',
   },
   {
-    tab: 'games', label: 'Games', unit: 'activities', mark: '🎮',
+    tab: 'games', label: 'Games', unit: 'activities',
+    glyph: '<rect x="2" y="7" width="20" height="11" rx="4" /><path d="M7 11v3M5.5 12.5h3M15.5 12h.01M18 14h.01" />',
     blurb: 'Learn English in an enjoyable and interactive way. Complete different '
          + 'language games to practise vocabulary, comprehension, and cognitive skills.',
   },
@@ -202,11 +205,11 @@ function hero() {
   return node;
 }
 
-function sectionCard({ tab, label, unit, blurb, mark }) {
+function sectionCard({ tab, label, unit, blurb, glyph }) {
   const card = el('button', { className: `section section--${tab}`, type: 'button' });
   card.innerHTML = `
     <span class="section__top">
-      <span class="section__icon" aria-hidden="true">${mark}</span>
+      <span class="section__icon" aria-hidden="true">${icon(glyph)}</span>
       <span class="section__arrow">${icon(ARROW)}</span>
     </span>
     <span class="section__title">${label}</span>
@@ -437,7 +440,7 @@ function wheelGame(game) {
 
   const ctx = wheel.getContext('2d');
   const read = (token) => getComputedStyle(document.documentElement).getPropertyValue(token).trim();
-  const tints = [read('--gold'), read('--paper-deep'), read('--gold-deep'), read('--gold-soft')];
+  const tints = ['#ffffff', read('--accent-soft'), '#f2f6fa', read('--paper-deep')];
 
   const paint = (turn) => {
     const r = size;
@@ -460,7 +463,7 @@ function wheelGame(game) {
 
       ctx.save();
       ctx.rotate((a0 + a1) / 2);
-      ctx.fillStyle = '#2a2007';
+      ctx.fillStyle = read('--accent');
       ctx.font = '600 34px -apple-system, system-ui, sans-serif';
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
