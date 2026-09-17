@@ -14,7 +14,7 @@
    --------------------------------------------------------------- */
 :root {
   /* palette */
-  --paper:       #f6f4ee;
+  --paper:       #fbf9f4;
   --paper-deep:  #e8e3d6;
   --gold:        #dda93f;
   --gold-deep:   #bd8a22;
@@ -73,25 +73,48 @@ h1, h2, h3, p { margin: 0; }
 button, input { font: inherit; color: inherit; }
 img, svg { display: block; max-width: 100%; }
 
-/* a slow wash of colour behind everything */
-body::before {
+/* a wash of colour behind everything, on two slowly moving layers */
+body::before,
+body::after {
   content: "";
   position: fixed;
-  inset: -22vmax;
+  inset: -25%;
   z-index: -1;
   pointer-events: none;
+  will-change: transform;
+}
+
+body::before {
   background:
-    radial-gradient(34vmax 27vmax at 14% 6%,  rgba(221, 169, 63, .40), transparent 63%),
-    radial-gradient(32vmax 26vmax at 86% 2%,  rgba(29, 92, 128, .28), transparent 64%),
-    radial-gradient(30vmax 25vmax at 78% 74%, rgba(31, 107, 70, .24), transparent 66%),
-    radial-gradient(26vmax 22vmax at 16% 88%, rgba(189, 138, 34, .24), transparent 66%);
-  animation: drift 32s ease-in-out infinite alternate;
+    radial-gradient(46% 34% at 14% 10%, rgba(228, 170, 52, .92), transparent 72%),
+    radial-gradient(44% 32% at 86% 6%,  rgba(38, 118, 160, .80), transparent 72%),
+    radial-gradient(46% 34% at 82% 72%, rgba(38, 134, 88, .76), transparent 72%),
+    radial-gradient(42% 32% at 10% 76%, rgba(212, 92, 68, .70), transparent 72%),
+    radial-gradient(40% 30% at 50% 98%, rgba(132, 98, 208, .70), transparent 72%);
+  filter: saturate(1.15);
+  animation: drift 30s ease-in-out infinite alternate;
+}
+
+body::after {
+  background:
+    radial-gradient(34% 26% at 66% 24%, rgba(44, 172, 162, .58), transparent 72%),
+    radial-gradient(32% 25% at 24% 46%, rgba(232, 146, 56, .52), transparent 74%),
+    radial-gradient(33% 25% at 96% 52%, rgba(132, 98, 208, .48), transparent 74%);
+  animation: swirl 70s linear infinite, tint 120s linear infinite;
+}
+
+@keyframes swirl {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes tint {
+  to { filter: hue-rotate(360deg); }
 }
 
 @keyframes drift {
   0%   { transform: translate3d(0, 0, 0) scale(1); }
-  50%  { transform: translate3d(2.5%, -2%, 0) scale(1.07); }
-  100% { transform: translate3d(-2%, 2.5%, 0) scale(1.03); }
+  50%  { transform: translate3d(4%, -3%, 0) scale(1.1); }
+  100% { transform: translate3d(-3%, 4%, 0) scale(1.04); }
 }
 [hidden] { display: none !important; }
 
@@ -448,7 +471,9 @@ body[data-section="games"]  { --hue: var(--c-games); }
   padding: 14px 18px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  background: var(--surface);
+  background: rgba(255, 253, 249, .9);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   cursor: pointer;
   text-align: left;
   transition: border-color .2s, background .2s, transform .2s var(--ease);
@@ -552,7 +577,9 @@ body[data-section="games"]  { --hue: var(--c-games); }
   padding: 18px;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  background: var(--surface);
+  background: rgba(255, 253, 249, .88);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   box-shadow: var(--shadow-sm);
   text-align: left;
   cursor: pointer;
