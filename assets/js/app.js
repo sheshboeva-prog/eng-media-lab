@@ -192,19 +192,6 @@ const SECTIONS = [
 
 const ARROW = '<path d="M5 12h13M13 6l6 6-6 6" />';
 
-function hero() {
-  const node = el('header', { className: 'hero' });
-  node.innerHTML = `
-    <p class="hero__eyebrow">Interactive English platform</p>
-    <h1 class="hero__title">Welcome to EnglishMediaLab!</h1>
-    <p class="hero__lead">
-      EnglishMediaLab is an interactive platform designed to help students improve
-      their English through videos, tests, and educational games.
-    </p>
-`;
-  return node;
-}
-
 function sectionCard({ tab, label, unit, blurb, glyph }) {
   const card = el('button', { className: `section section--${tab}`, type: 'button' });
   card.innerHTML = `
@@ -244,7 +231,6 @@ function howToLearn() {
 
 function renderHome() {
   const frag = document.createDocumentFragment();
-  frag.append(hero());
 
   const sections = el('div', { className: 'sections' });
   SECTIONS.forEach((section) => sections.append(sectionCard(section)));
@@ -717,6 +703,7 @@ function renderTab() {
   $('#home-btn').setAttribute('aria-current', atHome ? 'page' : 'false');
 
   document.body.dataset.section = state.tab;
+  $('#masthead').hidden = !atHome;
   $('#page-head').hidden = atHome;
   $('#filters').hidden = focused;
   $('.search').hidden = focused;

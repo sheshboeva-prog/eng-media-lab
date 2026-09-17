@@ -14,8 +14,8 @@
    --------------------------------------------------------------- */
 :root {
   /* palette: deep blue, amber, neutrals */
-  --paper:       #e8edf3;
-  --paper-deep:  #d7e0ea;
+  --paper:       #e2e9f1;
+  --paper-deep:  #cfdae6;
   --gold:        #c98a1f;
   --gold-deep:   #a87113;
   --gold-soft:   #f4e7cd;
@@ -24,11 +24,11 @@
   --bg-elevated:   #ffffff;
   --surface:       #ffffff;
   --surface-muted: var(--paper-deep);
-  --border:        #cfd9e4;
+  --border:        #c8d4e1;
   --border-strong: #adbccc;
   --text:          #0f2233;
   --text-muted:    #56687a;
-  --accent:        #10456e;
+  --accent:        #0d3856;
   --accent-soft:   #dde7f0;
   --accent-text:   #ffffff;
   --c-videos: var(--accent);
@@ -36,13 +36,14 @@
   --c-games:  var(--accent);
   --ok:   #1c6344;
   --no:   #94341f;
-  --shadow-sm: 0 1px 2px rgba(20, 32, 43, .06);
-  --shadow-md: 0 5px 18px rgba(20, 32, 43, .10);
-  --shadow-lg: 0 24px 60px rgba(20, 32, 43, .22);
+  --shadow-sm: 0 1px 1px rgba(13, 56, 86, .05);
+  --shadow-md: 0 6px 20px rgba(13, 56, 86, .10);
+  --shadow-lg: 0 24px 60px rgba(13, 56, 86, .22);
 
-  --radius-sm: 10px;
-  --radius:    14px;
-  --radius-lg: 20px;
+  --ink-band:  #0b2c47;
+  --radius-sm: 7px;
+  --radius:    10px;
+  --radius-lg: 12px;
   --header-h:  60px;
 
   --font-display: "Newsreader", Georgia, "Times New Roman", serif;
@@ -111,10 +112,8 @@ body::before {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: color-mix(in srgb, var(--bg) 82%, transparent);
-  backdrop-filter: saturate(180%) blur(16px);
-  -webkit-backdrop-filter: saturate(180%) blur(16px);
-  border-bottom: 1px solid var(--border);
+  background: var(--ink-band);
+  color: #e9f0f7;
 }
 
 .header__inner,
@@ -138,10 +137,12 @@ body::before {
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  font-family: var(--font-display);
+  font-size: 17px;
   font-weight: 600;
   letter-spacing: -.01em;
   text-decoration: none;
-  color: var(--text);
+  color: #ffffff;
   white-space: nowrap;
 }
 
@@ -150,9 +151,9 @@ body::before {
   place-items: center;
   width: 30px;
   height: 30px;
-  border-radius: 9px;
-  background: var(--accent);
-  color: var(--accent-text);
+  border-radius: 7px;
+  background: var(--gold);
+  color: #241a04;
 }
 .brand__mark svg { width: 17px; height: 17px; }
 
@@ -172,20 +173,21 @@ body::before {
   left: 10px;
   width: 16px;
   height: 16px;
-  color: var(--text-muted);
+  color: rgba(233, 240, 247, .66);
   pointer-events: none;
 }
 .search input {
   width: 200px;
   height: 36px;
   padding: 0 12px 0 32px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, .26);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, .1);
+  color: #ffffff;
   transition: width .25s var(--ease), border-color .2s;
 }
-.search input::placeholder { color: var(--text-muted); }
-.search input:focus { width: 260px; outline: none; border-color: var(--accent); }
+.search input::placeholder { color: rgba(233, 240, 247, .6); }
+.search input:focus { width: 260px; outline: none; border-color: var(--gold); }
 .search input::-webkit-search-cancel-button { -webkit-appearance: none; }
 
 .icon-btn {
@@ -193,20 +195,64 @@ body::before {
   place-items: center;
   width: 36px;
   height: 36px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, .28);
+  border-radius: 7px;
+  background: transparent;
+  color: #e9f0f7;
   cursor: pointer;
   transition: background .18s, border-color .18s, transform .18s var(--ease);
 }
-.icon-btn:hover { background: var(--surface-muted); }
+.icon-btn:hover { background: rgba(255, 255, 255, .14); }
 .icon-btn[aria-current="page"] {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-text);
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #241a04;
 }
 .icon-btn:active { transform: scale(.94); }
 .icon-btn svg { width: 17px; height: 17px; }
+
+/* ---------------------------------------------------------------
+   Masthead
+   --------------------------------------------------------------- */
+.masthead {
+  background: var(--ink-band);
+  border-bottom: 3px solid var(--gold);
+  color: #e9f0f7;
+}
+
+.masthead__inner {
+  width: min(1120px, 100% - 40px);
+  margin-inline: auto;
+  padding: 34px 0 40px;
+}
+
+.masthead__eyebrow {
+  color: var(--gold);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+
+.masthead__title {
+  max-width: 20ch;
+  margin-top: 14px;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4.4vw, 44px);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -.02em;
+  color: #ffffff;
+  text-wrap: balance;
+}
+
+.masthead__lead {
+  max-width: 60ch;
+  margin-top: 12px;
+  color: rgba(233, 240, 247, .8);
+  font-size: 15px;
+  line-height: 1.62;
+}
 
 /* ---------------------------------------------------------------
    Page head + filters
@@ -251,10 +297,10 @@ body[data-section="games"]  { --hue: var(--c-games); }
 
 .chip {
   height: 32px;
-  padding: 0 15px;
+  padding: 0 14px;
   white-space: nowrap;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: 7px;
   background: var(--surface);
   color: var(--text-muted);
   font-size: 13.5px;
@@ -473,7 +519,7 @@ body[data-section="games"]  { --hue: var(--c-games); }
   height: 34px;
   padding: 0 16px;
   border: 1px solid var(--border-strong);
-  border-radius: 999px;
+  border-radius: 7px;
   background: var(--surface);
   font-size: 13.5px;
   font-weight: 550;
@@ -497,40 +543,6 @@ body[data-section="games"]  { --hue: var(--c-games); }
 /* ---------------------------------------------------------------
    Home
    --------------------------------------------------------------- */
-.hero {
-  padding-bottom: 26px;
-  margin-bottom: 28px;
-  border-bottom: 1px solid var(--border);
-}
-
-.hero__eyebrow {
-  color: var(--text-muted);
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-}
-
-.hero__title {
-  max-width: 20ch;
-  margin-top: 12px;
-  font-family: var(--font-display);
-  font-size: clamp(28px, 4.1vw, 40px);
-  font-weight: 500;
-  line-height: 1.1;
-  letter-spacing: -.02em;
-  text-wrap: balance;
-}
-
-.hero__lead {
-  max-width: 62ch;
-  margin-top: 10px;
-  color: var(--text-muted);
-  font-size: 15px;
-  line-height: 1.6;
-}
-
-
 .sections {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(244px, 1fr));
@@ -666,10 +678,6 @@ body[data-section="games"]  { --hue: var(--c-games); }
 }
 .linkish--end { margin-left: auto; }
 .linkish--end svg { width: 15px; height: 15px; }
-
-@media (max-width: 640px) {
-  .hero__title { max-width: none; }
-}
 
 /* ---------------------------------------------------------------
    Game covers
@@ -864,7 +872,7 @@ body[data-section="games"]  { --hue: var(--c-games); }
 .bin__label {
   height: 36px;
   border: 0;
-  border-radius: 999px;
+  border-radius: 7px;
   background: var(--accent);
   color: var(--accent-text);
   font-weight: 600;
@@ -1107,9 +1115,9 @@ body[data-section="games"]  { --hue: var(--c-games); }
 
 .btn {
   height: 40px;
-  padding: 0 18px;
+  padding: 0 20px;
   border: 1px solid var(--border-strong);
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--surface);
   font-weight: 550;
   cursor: pointer;
@@ -1284,9 +1292,10 @@ body[data-section="games"]  { --hue: var(--c-games); }
    Responsive
    --------------------------------------------------------------- */
 @media (max-width: 640px) {
-  .header__inner, .main, .page-head, .filters, .footer__inner {
+  .header__inner, .main, .page-head, .filters, .footer__inner, .masthead__inner {
     width: calc(100% - 32px);
   }
+  .masthead__title { max-width: none; }
   .brand__text { display: none; }
   .search input { width: 150px; }
   .search input:focus { width: 190px; }
@@ -1330,6 +1339,17 @@ body[data-section="games"]  { --hue: var(--c-games); }
     </div>
 
   </header>
+
+  <section id="masthead" class="masthead" hidden>
+    <div class="masthead__inner">
+      <p class="masthead__eyebrow">Interactive English platform</p>
+      <h1 class="masthead__title">Welcome to EnglishMediaLab!</h1>
+      <p class="masthead__lead">
+        EnglishMediaLab is an interactive platform designed to help students improve
+        their English through videos, tests, and educational games.
+      </p>
+    </div>
+  </section>
 
   <main id="main" class="main" tabindex="-1">
     <section class="page-head" id="page-head">
@@ -2438,19 +2458,6 @@ const SECTIONS = [
 
 const ARROW = '<path d="M5 12h13M13 6l6 6-6 6" />';
 
-function hero() {
-  const node = el('header', { className: 'hero' });
-  node.innerHTML = `
-    <p class="hero__eyebrow">Interactive English platform</p>
-    <h1 class="hero__title">Welcome to EnglishMediaLab!</h1>
-    <p class="hero__lead">
-      EnglishMediaLab is an interactive platform designed to help students improve
-      their English through videos, tests, and educational games.
-    </p>
-`;
-  return node;
-}
-
 function sectionCard({ tab, label, unit, blurb, glyph }) {
   const card = el('button', { className: `section section--${tab}`, type: 'button' });
   card.innerHTML = `
@@ -2490,7 +2497,6 @@ function howToLearn() {
 
 function renderHome() {
   const frag = document.createDocumentFragment();
-  frag.append(hero());
 
   const sections = el('div', { className: 'sections' });
   SECTIONS.forEach((section) => sections.append(sectionCard(section)));
@@ -2963,6 +2969,7 @@ function renderTab() {
   $('#home-btn').setAttribute('aria-current', atHome ? 'page' : 'false');
 
   document.body.dataset.section = state.tab;
+  $('#masthead').hidden = !atHome;
   $('#page-head').hidden = atHome;
   $('#filters').hidden = focused;
   $('.search').hidden = focused;

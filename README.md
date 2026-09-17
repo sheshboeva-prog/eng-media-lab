@@ -25,10 +25,11 @@ Then open http://localhost:5173. A server is needed because the JS uses ES modul
 The palette is ink navy and gold on paper, defined at the top of the stylesheet as
 `--paper`, `--paper-deep`, `--gold`, `--gold-deep`, `--gold-soft` and `--accent`.
 Changing those six values reskins the whole site. There is one theme only, no dark
-mode. Behind everything sits one still gradient of the brand blue, top-heavy and faint.
-The palette is deliberately short: deep blue carries every heading, control and
-marker, amber appears only on the game covers, and the rest is white and blue-grey.
-Green and red are kept for right and wrong answers alone. `--c-videos`, `--c-tests` and `--c-games` all point at the accent, so every section
+mode. The site is built around a deep navy band. The header sits in it, and on the home
+page the welcome block continues it, closed by a gold rule. Everything below is
+white on blue-grey, with square-ish corners and thin borders rather than soft
+shadows. Deep navy carries every heading rule, icon and marker; gold marks the
+brand and the band's edge; green and red are kept for right and wrong answers. `--c-videos`, `--c-tests` and `--c-games` all point at the accent, so every section
 reads in the same blue; give one of them its own value to colour that section apart.
 
 Motion: content rises in when a section opens, cards follow in a short stagger, a
@@ -59,7 +60,7 @@ Tests are done: ten topic tests of five questions each. Questions appear one at 
 time, and finishing shows a score with every question marked right or wrong and the
 correct answer next to each miss.
 
-Home opens with the welcome text, then three cards carrying the author's
+Home opens with the welcome text in the navy masthead, then three cards carrying the author's
 description of each section, then the "How to learn" line. There are no buttons in
 the hero: the cards are the way in. The house
 button in the header is the only navigation control, marked in vanilla while you
