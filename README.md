@@ -23,7 +23,8 @@ Then open http://localhost:5173. A server is needed because the JS uses ES modul
 | `serve.py` | Dev server that sends `Cache-Control: no-store` so edits show on reload |
 
 The palette is ink navy and gold on paper, defined at the top of the stylesheet as
-`--paper`, `--paper-deep`, `--gold`, `--gold-deep`, `--gold-soft` and `--accent`.
+`--stone`, `--stone-deep`, `--brass`, `--brass-deep`, `--brass-soft`, `--accent`
+and `--ink-band`.
 Changing those six values reskins the whole site. There is one theme only, no dark
 mode. The site is built around a deep navy band. The header sits in it, and on the home
 page the welcome block continues it, closed by a gold rule. Everything below is

@@ -1,4 +1,4 @@
-import { videos, tests, games, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt } from './data.js?v=14';
+import { videos, tests, games, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt } from './data.js?v=15';
 
 /* ---------------------------------------------------------------
    State
@@ -30,7 +30,7 @@ const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 const countOf = (item) => (Array.isArray(item.questions) ? item.questions.length : item.questions);
 
 const icon = (paths, attrs = '') =>
-  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${attrs}>${paths}</svg>`;
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" ${attrs}>${paths}</svg>`;
 
 /* ---------------------------------------------------------------
    Cards
@@ -47,7 +47,7 @@ function videoCard(item) {
       <img class="card__img" src="${youtubeThumb(item.id)}" alt="" loading="lazy"
            onerror="this.onerror=null;this.src='${youtubeThumbAlt(item.id)}'" />
       <span class="card__tag">${item.topic}</span>
-      <span class="card__play">${icon('<path d="m9 7 9 5-9 5z" fill="currentColor" stroke="none" />')}</span>
+      <span class="card__play">${icon('<path d="M9.4 7.2 17.6 12l-8.2 4.8z" fill="currentColor" stroke="none" />')}</span>
       <span class="card__badge">${item.duration}</span>
     </div>
     <div class="card__body">
@@ -63,7 +63,7 @@ function videoCard(item) {
 function testRow(item) {
   const row = el('button', { className: 'row', type: 'button' });
   row.innerHTML = `
-    <span class="row__icon">${icon('<path d="M9 5h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" /><path d="M10 10h4M10 14h4" />')}</span>
+    <span class="row__icon">${icon('<path d="M7.6 3.8h8.8a1.7 1.7 0 0 1 1.7 1.7v13a1.7 1.7 0 0 1-1.7 1.7H7.6a1.7 1.7 0 0 1-1.7-1.7v-13a1.7 1.7 0 0 1 1.7-1.7z" /><path d="M9.2 9h5.6M9.2 12.2h5.6M9.2 15.4h3" />')}</span>
     <span class="row__main">
       <span class="row__title">${item.title}</span>
       <span class="row__meta">${item.topic} · ${countOf(item)} questions</span>
@@ -84,7 +84,7 @@ function gameCard(item) {
     <div class="cover cover--${item.cover}">
       <span class="cover__type">${item.type}</span>
       <span class="cover__title">${item.title}</span>
-      <span class="cover__play">${icon('<path d="m9 7 9 5-9 5z" fill="currentColor" stroke="none" />')}</span>
+      <span class="cover__play">${icon('<path d="M9.4 7.2 17.6 12l-8.2 4.8z" fill="currentColor" stroke="none" />')}</span>
     </div>
     <div class="card__body">
       <p class="card__desc card__desc--lead">${item.intro}</p>
@@ -182,25 +182,25 @@ function renderContent() {
 const SECTIONS = [
   {
     tab: 'videos', label: 'Videos', unit: 'lessons',
-    glyph: '<rect x="3" y="5" width="18" height="14" rx="2" /><path d="m10 9.5 5 2.5-5 2.5z" />',
+    glyph: '<circle cx="12" cy="12" r="8.6" /><path d="M10.4 8.8 15.6 12l-5.2 3.2z" fill="currentColor" stroke="none" />',
     blurb: 'Watch short English-language videos on different topics. Listen carefully '
          + 'and focus on the main ideas, key information, and new vocabulary.',
   },
   {
     tab: 'tests', label: 'Tests', unit: 'topics',
-    glyph: '<path d="M9 4h6a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" /><path d="M10 10h4M10 14h4" />',
+    glyph: '<path d="M7.5 3.8h9a1.7 1.7 0 0 1 1.7 1.7v13a1.7 1.7 0 0 1-1.7 1.7h-9a1.7 1.7 0 0 1-1.7-1.7v-13A1.7 1.7 0 0 1 7.5 3.8z" /><path d="M9.2 9.4h5.6M9.2 12.6h5.6M9.2 15.8h3.2" />',
     blurb: 'Check your understanding after watching the videos. Answer the questions '
          + 'and test your English knowledge, comprehension, and analytical skills.',
   },
   {
     tab: 'games', label: 'Games', unit: 'activities',
-    glyph: '<rect x="2" y="7" width="20" height="11" rx="4" /><path d="M7 11v3M5.5 12.5h3M15.5 12h.01M18 14h.01" />',
+    glyph: '<rect x="3.6" y="3.6" width="7.2" height="7.2" rx="2" /><rect x="13.2" y="3.6" width="7.2" height="7.2" rx="2" /><rect x="3.6" y="13.2" width="7.2" height="7.2" rx="2" /><rect x="13.2" y="13.2" width="7.2" height="7.2" rx="2" />',
     blurb: 'Learn English in an enjoyable and interactive way. Complete different '
          + 'language games to practise vocabulary, comprehension, and cognitive skills.',
   },
 ];
 
-const ARROW = '<path d="M5 12h13M13 6l6 6-6 6" />';
+const ARROW = '<path d="M4.5 12h14M12.8 6.4 18.4 12l-5.6 5.6" />';
 
 function sectionCard({ tab, label, unit, blurb, glyph }) {
   const card = el('button', { className: `section section--${tab}`, type: 'button' });
@@ -337,7 +337,7 @@ function playerShell(game, body) {
   const wrap = el('section', { className: 'player' });
   wrap.innerHTML = `
     <div class="runner__head">
-      <button class="linkish" type="button" data-exit>${icon('<path d="M15 18l-6-6 6-6" />')} All games</button>
+      <button class="linkish" type="button" data-exit>${icon('<path d="M14.6 18.2 8.4 12l6.2-6.2" />')} All games</button>
       <span class="runner__step">${game.type}</span>
     </div>
     <p class="player__intro">${game.intro}</p>
@@ -394,8 +394,8 @@ function gameResult(game, { correct, total, seconds, review = [], extra = '' }) 
     const node = el('li', { className: `review__item ${item.ok ? 'is-ok' : 'is-no'}` });
     node.innerHTML = `
       <span class="review__mark">${item.ok
-        ? icon('<path d="M20 6L9 17l-5-5" />')
-        : icon('<path d="M6 6l12 12M18 6L6 18" />')}</span>
+        ? icon('<path d="m19.4 6.6-9.9 9.9-4.9-4.9" />')
+        : icon('<path d="m6.6 6.6 10.8 10.8M17.4 6.6 6.6 17.4" />')}</span>
       <div class="review__body">
         <p class="review__q">${item.q}</p>
         ${item.your ? `<p class="review__answer"><span class="review__label">You said</span>${item.your}</p>` : ''}
@@ -1003,7 +1003,7 @@ function wheelGame(game) {
 
   const ctx = wheel.getContext('2d');
   const read = (token) => getComputedStyle(document.documentElement).getPropertyValue(token).trim();
-  const tints = ['#ffffff', read('--accent-soft'), '#f2f6fa', read('--paper-deep')];
+  const tints = ['#ffffff', read('--accent-soft'), '#f3f6f3', read('--paper-deep')];
 
   const paint = (turn) => {
     const r = size;
@@ -1147,7 +1147,7 @@ function renderQuestion() {
   const wrap = el('section', { className: 'runner' });
   wrap.innerHTML = `
     <div class="runner__head">
-      <button class="linkish" type="button" data-exit>${icon('<path d="M15 18l-6-6 6-6" />')} All tests</button>
+      <button class="linkish" type="button" data-exit>${icon('<path d="M14.6 18.2 8.4 12l6.2-6.2" />')} All tests</button>
       <span class="runner__step">Question ${index + 1} of ${total}</span>
     </div>
     <div class="runner__bar"><span style="width:${(index / total) * 100}%"></span></div>
@@ -1185,7 +1185,7 @@ function renderResults() {
   const wrap = el('section', { className: 'runner' });
   wrap.innerHTML = `
     <div class="runner__head">
-      <button class="linkish" type="button" data-exit>${icon('<path d="M15 18l-6-6 6-6" />')} All tests</button>
+      <button class="linkish" type="button" data-exit>${icon('<path d="M14.6 18.2 8.4 12l6.2-6.2" />')} All tests</button>
     </div>
 
     <div class="score">
@@ -1213,8 +1213,8 @@ function renderResults() {
     const item = el('li', { className: `review__item ${ok ? 'is-ok' : 'is-no'}` });
     item.innerHTML = `
       <span class="review__mark">${ok
-        ? icon('<path d="M20 6L9 17l-5-5" />')
-        : icon('<path d="M6 6l12 12M18 6L6 18" />')}</span>
+        ? icon('<path d="m19.4 6.6-9.9 9.9-4.9-4.9" />')
+        : icon('<path d="m6.6 6.6 10.8 10.8M17.4 6.6 6.6 17.4" />')}</span>
       <div class="review__body">
         <p class="review__q">${question.q}</p>
         <p class="review__answer">
