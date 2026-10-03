@@ -902,6 +902,167 @@ body[data-section="games"]  { --hue: var(--c-games); }
 .chip-item.is-no::after { content: " ✕"; font-weight: 700; }
 .chip-item.is-ok::after { content: " ✓"; color: var(--ok); font-weight: 700; }
 
+/* --- the skill labels --- */
+.traits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  margin: 0 0 22px;
+}
+.traits > div {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 5px 11px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--surface);
+}
+.traits dt {
+  color: var(--text-muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.traits dd {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 550;
+}
+
+.card__skill {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* --- predict the next --- */
+.predict { display: grid; gap: 16px; }
+.predict__scene {
+  padding: 18px 20px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--surface);
+  font-size: 16.5px;
+  line-height: 1.55;
+}
+.predict__options { display: grid; gap: 10px; }
+.opt.is-right {
+  border-color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 9%, var(--surface));
+}
+.opt.is-right .opt__letter { background: var(--ok); color: #fff; }
+.opt.is-wrong {
+  border-color: var(--no);
+  background: color-mix(in srgb, var(--no) 8%, var(--surface));
+}
+.opt.is-wrong .opt__letter { background: var(--no); color: #fff; }
+.opt:disabled { cursor: default; }
+
+.predict__why {
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.predict__why.is-ok strong { color: var(--ok); }
+.predict__why.is-no strong { color: var(--no); }
+
+/* --- memory challenge --- */
+.memory__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+.memory__tile {
+  display: grid;
+  gap: 7px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 12.5px;
+  text-align: center;
+}
+.memory__tile img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 6px;
+}
+.memory__tile.is-pickable { cursor: pointer; transition: border-color .18s, transform .18s var(--ease); }
+.memory__tile.is-pickable:hover { border-color: var(--border-strong); }
+.memory__tile.is-picked { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.memory__tile.is-ok { border-color: var(--ok); box-shadow: inset 0 0 0 1px var(--ok); }
+.memory__tile.is-no { border-color: var(--no); box-shadow: inset 0 0 0 1px var(--no); opacity: .75; }
+.memory__tile.is-missed { border-style: dashed; border-color: var(--ok); }
+.memory__tile.is-marked { cursor: default; }
+
+/* --- cause and effect --- */
+.chain { display: grid; gap: 14px; }
+.chain__title {
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+.chain__built {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.chain__slot {
+  position: relative;
+  padding: 12px 14px 12px 44px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  line-height: 1.45;
+  animation: riseIn .3s var(--ease) both;
+}
+.chain__slot::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 12px;
+  top: 11px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+}
+.chain__slot.is-ok { border-color: var(--ok); }
+.chain__slot.is-ok::before { background: var(--ok); color: #fff; }
+.chain__slot.is-no { border-color: var(--no); }
+.chain__slot.is-no::before { background: var(--no); color: #fff; }
+
+.chain__pool { display: flex; flex-wrap: wrap; gap: 8px; }
+.chain__step {
+  padding: 10px 13px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-align: left;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: border-color .18s, opacity .2s;
+}
+.chain__step:hover { border-color: var(--accent); }
+.chain__step:disabled { opacity: .3; cursor: default; }
+
 /* --- spin the wheel --- */
 .wheel__dial {
   position: relative;

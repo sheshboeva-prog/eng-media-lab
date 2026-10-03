@@ -85,6 +85,7 @@ function gameCard(item) {
         <span class="dot"></span>
         <span>${item.type}</span>
       </div>
+      <p class="card__skill">${item.cognitive}</p>
     </div>`;
   card.addEventListener('click', () => startGame(item));
   return card;
@@ -275,6 +276,11 @@ function playerShell(game, body) {
       <span class="runner__step">${game.type}</span>
     </div>
     <p class="player__intro">${game.intro}</p>
+    <dl class="traits">
+      <div><dt>Cognitive skill</dt><dd>${game.cognitive}</dd></div>
+      <div><dt>Language skill</dt><dd>${game.language}</dd></div>
+      <div><dt>Material</dt><dd>${game.media}</dd></div>
+    </dl>
     <div class="board"></div>`;
   $('[data-exit]', wrap).addEventListener('click', exitGame);
   $('.board', wrap).append(body);
@@ -283,7 +289,8 @@ function playerShell(game, body) {
 
 function renderPlayer() {
   const game = state.play;
-  const engines = { match: matchGame, sort: sortGame, wheel: wheelGame, cards: cardsGame };
+  const engines = { match: matchGame, sort: sortGame, wheel: wheelGame, cards: cardsGame,
+                    predict: predictGame, memory: memoryGame, chain: chainGame };
   return playerShell(game, engines[game.kind](game));
 }
 
@@ -532,6 +539,210 @@ function cardsGame(game) {
   draw();
   holder.append(card, status, el('div', { className: 'runner__actions runner__actions--centre' }, [shuffleBtn, next]));
   return holder;
+}
+
+/* --- predict the next: a situation, then what follows --- */
+function predictGame(game) {
+  const holder = el('div', { className: 'game' });
+  const order = shuffle(game.items);
+  const status = el('p', { className: 'board__status' });
+  const stage = el('div', { className: 'predict' });
+  let at = 0;
+  let right = 0;
+
+  function draw() {
+    status.textContent = `Situation ${at + 1} of ${order.length}`;
+    const item = order[at];
+    stage.replaceChildren();
+    const scene = el('p', { className: 'predict__scene', textContent: item.scene });
+    const list = el('div', { className: 'predict__options' });
+    item.options.forEach((text, i) => {
+      const btn = el('button', { className: 'opt', type: 'button' });
+      btn.innerHTML = `<span class="opt__letter">${LETTERS[i]}</span><span class="opt__text">${text}</span>`;
+      btn.addEventListener('click', () => answer(i));
+      list.append(btn);
+    });
+    stage.append(scene, list);
+  }
+
+  function answer(choice) {
+    const item = order[at];
+    const ok = choice === item.answer;
+    if (ok) right += 1;
+    $$('.opt', stage).forEach((b, i) => {
+      b.disabled = true;
+      if (i === item.answer) b.classList.add('is-right');
+      else if (i === choice) b.classList.add('is-wrong');
+    });
+    const note = el('div', { className: `predict__why ${ok ? 'is-ok' : 'is-no'}` });
+    note.innerHTML = `<strong>${ok ? 'That follows.' : 'Not quite.'}</strong> ${item.why}`;
+    const next = el('button', {
+      className: 'btn btn--primary',
+      type: 'button',
+      textContent: at === order.length - 1 ? 'See how you did' : 'Next situation',
+    });
+    next.addEventListener('click', () => {
+      at += 1;
+      if (at < order.length) draw();
+      else finish();
+    });
+    stage.append(note, el('div', { className: 'runner__actions' }, [next]));
+  }
+
+  function finish() {
+    stage.replaceChildren(el('p', {
+      className: 'stage__done',
+      textContent: `${right} of ${order.length} predictions right.`,
+    }));
+    status.textContent = 'Every situation answered.';
+    status.classList.add('is-done');
+  }
+
+  draw();
+  holder.append(stage, status, replayButton(game));
+  return holder;
+}
+
+/* --- memory challenge: look, then remember --- */
+function memoryGame(game) {
+  const holder = el('div', { className: 'game' });
+  const stage = el('div', { className: 'memory' });
+  const status = el('p', { className: 'board__status' });
+  const actions = el('div', { className: 'runner__actions runner__actions--centre' });
+  let timer = null;
+
+  const tile = (item, extra = '') => `
+    <div class="memory__tile ${extra}" data-text="${item.text}">
+      <img src="${item.img}" alt="" loading="lazy" />
+      <span>${item.text}</span>
+    </div>`;
+
+  function study() {
+    let left = game.seconds;
+    stage.innerHTML = `<div class="memory__grid">${shuffle(game.shown).map((i) => tile(i)).join('')}</div>`;
+    status.textContent = `Look closely. ${left} seconds left.`;
+    const done = el('button', { className: 'btn', type: 'button', textContent: 'I am ready' });
+    done.addEventListener('click', () => { clearInterval(timer); recall(); });
+    actions.replaceChildren(done);
+    timer = setInterval(() => {
+      left -= 1;
+      status.textContent = `Look closely. ${left} second${left === 1 ? '' : 's'} left.`;
+      if (left <= 0) { clearInterval(timer); recall(); }
+    }, 1000);
+  }
+
+  function recall() {
+    const pool = shuffle([...game.shown, ...game.extra]);
+    const picked = new Set();
+    stage.innerHTML = `<div class="memory__grid memory__grid--pick">${pool.map((i) => tile(i, 'is-pickable')).join('')}</div>`;
+    status.textContent = `Pick the ${game.shown.length} you saw. 0 chosen.`;
+    $$('.memory__tile', stage).forEach((node) => {
+      node.addEventListener('click', () => {
+        if (node.classList.contains('is-marked')) return;
+        const text = node.dataset.text;
+        if (picked.has(text)) { picked.delete(text); node.classList.remove('is-picked'); }
+        else { picked.add(text); node.classList.add('is-picked'); }
+        status.textContent = `Pick the ${game.shown.length} you saw. ${picked.size} chosen.`;
+      });
+    });
+
+    const check = el('button', { className: 'btn btn--primary', type: 'button', textContent: 'Check my answer' });
+    check.addEventListener('click', () => {
+      const wanted = new Set(game.shown.map((i) => i.text));
+      let right = 0;
+      $$('.memory__tile', stage).forEach((node) => {
+        const was = wanted.has(node.dataset.text);
+        const chose = picked.has(node.dataset.text);
+        node.classList.add('is-marked');
+        if (was && chose) { node.classList.add('is-ok'); right += 1; }
+        else if (chose) node.classList.add('is-no');
+        else if (was) node.classList.add('is-missed');
+      });
+      status.textContent = `${right} of ${game.shown.length} remembered. Green was right, red was not, outlined ones you missed.`;
+      status.classList.add('is-done');
+      actions.replaceChildren(replayInner(game));
+    });
+    actions.replaceChildren(check);
+  }
+
+  study();
+  holder.append(stage, status, actions);
+  return holder;
+}
+
+/* --- cause and effect: put the chain back in order --- */
+function chainGame(game) {
+  const holder = el('div', { className: 'game' });
+  const stage = el('div', { className: 'chain' });
+  const status = el('p', { className: 'board__status' });
+  const actions = el('div', { className: 'runner__actions runner__actions--centre' });
+  let at = 0;
+  let scored = 0;
+
+  function draw() {
+    const chain = game.chains[at];
+    const chosen = [];
+    status.textContent = `Chain ${at + 1} of ${game.chains.length}`;
+    stage.innerHTML = `
+      <p class="chain__title">${chain.title}</p>
+      <ol class="chain__built"></ol>
+      <div class="chain__pool"></div>`;
+
+    const built = $('.chain__built', stage);
+    const pool = $('.chain__pool', stage);
+
+    shuffle(chain.steps).forEach((step) => {
+      const chip = el('button', { className: 'chain__step', type: 'button', textContent: step });
+      chip.addEventListener('click', () => {
+        if (chip.disabled) return;
+        chip.disabled = true;
+        chosen.push(step);
+        built.append(el('li', { className: 'chain__slot', textContent: step }));
+        if (chosen.length === chain.steps.length) check(chain, chosen, built);
+      });
+      pool.append(chip);
+    });
+    actions.replaceChildren();
+  }
+
+  function check(chain, chosen, built) {
+    let right = 0;
+    $$('.chain__slot', built).forEach((slot, i) => {
+      const ok = chosen[i] === chain.steps[i];
+      slot.classList.add(ok ? 'is-ok' : 'is-no');
+      if (ok) right += 1;
+    });
+    scored += right;
+    const last = at === game.chains.length - 1;
+    status.textContent = `${right} of ${chain.steps.length} in the right place.`;
+    const next = el('button', {
+      className: 'btn btn--primary',
+      type: 'button',
+      textContent: last ? 'Finish' : 'Next chain',
+    });
+    next.addEventListener('click', () => {
+      at += 1;
+      if (at < game.chains.length) { status.classList.remove('is-done'); draw(); }
+      else {
+        const total = game.chains.reduce((n, c) => n + c.steps.length, 0);
+        stage.replaceChildren(el('p', { className: 'stage__done', textContent: `${scored} of ${total} steps placed correctly.` }));
+        status.textContent = 'Every chain done.';
+        status.classList.add('is-done');
+        actions.replaceChildren(replayInner(game));
+      }
+    });
+    actions.replaceChildren(next);
+  }
+
+  draw();
+  holder.append(stage, status, actions);
+  return holder;
+}
+
+function replayInner(game) {
+  const again = el('button', { className: 'btn', type: 'button', textContent: 'Start over' });
+  again.addEventListener('click', () => { state.play = game; renderContent(); });
+  return again;
 }
 
 function replayButton(game) {

@@ -692,7 +692,10 @@ export const games = [
         "Drought",
         "assets/img/env-drought.jpg"
       ]
-    ]
+    ],
+    "cognitive": "Semantic memory, association",
+    "language": "Vocabulary",
+    "media": "Photographs"
   },
   {
     "id": "travel-sort",
@@ -754,6 +757,89 @@ export const games = [
         "group": 2,
         "img": "assets/img/trv-map.jpg"
       }
+    ],
+    "cognitive": "Categorisation",
+    "language": "Vocabulary",
+    "media": "Photographs"
+  },
+  {
+    "id": "predict-next",
+    "title": "Predict the Next",
+    "type": "Prediction",
+    "topic": "Thinking",
+    "cover": "ink",
+    "kind": "predict",
+    "cognitive": "Prediction, inference",
+    "language": "Reading",
+    "media": "Situations",
+    "intro": "Read what has happened so far, then choose what follows.",
+    "items": [
+      {
+        "scene": "A city removes the last of its street trees to widen the roads. Summer arrives.",
+        "options": [
+          "The streets grow hotter than the surrounding countryside",
+          "Summer temperatures in the city fall",
+          "Rainwater drains away more slowly",
+          "Air quality improves across the city"
+        ],
+        "answer": 0,
+        "why": "Trees shade surfaces and cool the air as they release water. Take them away and the stone and asphalt hold the heat."
+      },
+      {
+        "scene": "A factory town closes its only plant. Within a year, most young workers have left for the capital.",
+        "options": [
+          "Housing demand in the town rises sharply",
+          "Schools and shops in the town begin to close",
+          "Wages in the town increase",
+          "The capital loses population"
+        ],
+        "answer": 1,
+        "why": "Fewer people means fewer customers and fewer pupils, so the services that depend on them close one by one."
+      },
+      {
+        "scene": "A student watches two hours of short videos every night before bed, with the lights off.",
+        "options": [
+          "Falling asleep becomes easier",
+          "Morning concentration improves",
+          "Sleep gets shorter and lighter",
+          "The habit has no measurable effect"
+        ],
+        "answer": 2,
+        "why": "Late screen use pushes sleep later and breaks it up, so the night is both shorter and shallower."
+      },
+      {
+        "scene": "A country lowers the tax on imported goods. Foreign products arrive more cheaply than local ones.",
+        "options": [
+          "Local producers face stronger competition",
+          "Shoppers pay more for the same goods",
+          "Trade between the countries falls",
+          "Local producers raise their prices"
+        ],
+        "answer": 0,
+        "why": "Cheaper imports take price pressure straight to the producers who were selling at the old price."
+      },
+      {
+        "scene": "A post claiming a new health cure spreads quickly. No source is given and no study is named.",
+        "options": [
+          "The claim is probably reliable because many people shared it",
+          "Sharing it further is the responsible thing to do",
+          "It should be checked against a named source before anyone acts on it",
+          "The number of shares shows the claim has been verified"
+        ],
+        "answer": 2,
+        "why": "Popularity is not evidence. A claim with no source behind it has not been tested by anyone."
+      },
+      {
+        "scene": "A traveller arrives in a country whose greetings, meals and working hours are unlike home. The first week is exhausting.",
+        "options": [
+          "The feeling means the traveller dislikes the country",
+          "This is culture shock, and it usually eases with contact and routine",
+          "The traveller should avoid local people until it passes",
+          "The feeling will last for as long as the stay does"
+        ],
+        "answer": 1,
+        "why": "Culture shock is a normal stage of adjusting. Learning the customs and meeting people shortens it."
+      }
     ]
   },
   {
@@ -789,7 +875,10 @@ export const games = [
         "Demand",
         "How much of a product people want to buy"
       ]
-    ]
+    ],
+    "cognitive": "Semantic memory",
+    "language": "Vocabulary",
+    "media": "Definitions"
   },
   {
     "id": "social-sort",
@@ -836,6 +925,129 @@ export const games = [
         "text": "Broken sleep from late-night screens",
         "group": 1
       }
+    ],
+    "cognitive": "Evaluation, judgement",
+    "language": "Reading",
+    "media": "Statements"
+  },
+  {
+    "id": "memory-challenge",
+    "title": "Memory Challenge",
+    "type": "Memory",
+    "topic": "Thinking",
+    "cover": "sun",
+    "kind": "memory",
+    "cognitive": "Attention, working memory",
+    "language": "Vocabulary",
+    "media": "Photographs",
+    "intro": "Study the photographs, then pick out the ones you saw.",
+    "seconds": 14,
+    "shown": [
+      {
+        "text": "Wind turbines",
+        "img": "assets/img/env-renewable.jpg"
+      },
+      {
+        "text": "Cracked dry ground",
+        "img": "assets/img/env-drought.jpg"
+      },
+      {
+        "text": "Recycling sign",
+        "img": "assets/img/env-recycling.jpg"
+      },
+      {
+        "text": "Departure gate",
+        "img": "assets/img/trv-gate.jpg"
+      },
+      {
+        "text": "Hotel room",
+        "img": "assets/img/trv-room.jpg"
+      },
+      {
+        "text": "Passport",
+        "img": "assets/img/trv-passport.jpg"
+      }
+    ],
+    "extra": [
+      {
+        "text": "Factory chimneys",
+        "img": "assets/img/env-pollution.jpg"
+      },
+      {
+        "text": "Cleared forest",
+        "img": "assets/img/env-deforestation.jpg"
+      },
+      {
+        "text": "Exhaust pipe",
+        "img": "assets/img/env-emissions.jpg"
+      },
+      {
+        "text": "Train platform",
+        "img": "assets/img/trv-platform.jpg"
+      },
+      {
+        "text": "Swimming pool",
+        "img": "assets/img/trv-pool.jpg"
+      },
+      {
+        "text": "Suitcase",
+        "img": "assets/img/trv-suitcase.jpg"
+      }
+    ]
+  },
+  {
+    "id": "media-detective",
+    "title": "Media Detective",
+    "type": "Group sort",
+    "topic": "Media",
+    "cover": "ink",
+    "kind": "sort",
+    "cognitive": "Critical thinking, evaluation",
+    "language": "Reading",
+    "media": "Statements",
+    "intro": "Decide what each line really is.",
+    "groups": [
+      "Fact",
+      "Opinion",
+      "Unsupported claim"
+    ],
+    "items": [
+      {
+        "text": "Water boils at 100 degrees Celsius at sea level",
+        "group": 0
+      },
+      {
+        "text": "The city recorded 31 days above 35 degrees last summer",
+        "group": 0
+      },
+      {
+        "text": "Three in four households in the survey owned a bicycle",
+        "group": 0
+      },
+      {
+        "text": "Winter is the most pleasant season of the year",
+        "group": 1
+      },
+      {
+        "text": "City life is far more interesting than village life",
+        "group": 1
+      },
+      {
+        "text": "Learning English is easier than learning Spanish",
+        "group": 1
+      },
+      {
+        "text": "This drink removes every toxin from your body in a day",
+        "group": 2
+      },
+      {
+        "text": "Scientists have proven that the new app doubles memory",
+        "group": 2
+      },
+      {
+        "text": "Everybody knows that electric cars pollute more than petrol ones",
+        "group": 2
+      }
     ]
   },
   {
@@ -855,7 +1067,10 @@ export const games = [
       "What does a balanced meal look like to you?",
       "Which is harder to change: what you eat or how you move?",
       "How much water do you really drink in a day?"
-    ]
+    ],
+    "cognitive": "Recall, fluency",
+    "language": "Speaking",
+    "media": "Prompts"
   },
   {
     "id": "cities-cards",
@@ -874,6 +1089,88 @@ export const games = [
       "Which does a city need more: parks or parking?",
       "What would you change about public transport?",
       "Do people move to cities for work, for study, or for something else?"
+    ],
+    "cognitive": "Elaboration, fluency",
+    "language": "Speaking",
+    "media": "Prompts"
+  },
+  {
+    "id": "cause-effect",
+    "title": "Cause and Effect",
+    "type": "Order the chain",
+    "topic": "Thinking",
+    "cover": "sun",
+    "kind": "chain",
+    "cognitive": "Causal reasoning, logic",
+    "language": "Reading",
+    "media": "Chains",
+    "intro": "Put each chain back into the order it happens.",
+    "chains": [
+      {
+        "title": "Globalization",
+        "steps": [
+          "Countries lower the barriers to trade",
+          "Goods and services cross borders more freely",
+          "People meet other cultures through what they buy and watch",
+          "New opportunities to work and study abroad appear"
+        ]
+      },
+      {
+        "title": "Urbanisation",
+        "steps": [
+          "Work and study draw people towards the city",
+          "The population of the city rises",
+          "Demand for housing and transport outgrows the supply",
+          "The city builds upwards and outwards to keep up"
+        ]
+      },
+      {
+        "title": "Emissions",
+        "steps": [
+          "More vehicles and factories burn fuel",
+          "More greenhouse gas enters the atmosphere",
+          "Average temperatures climb",
+          "Droughts and heatwaves last longer than they used to"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "word-concept",
+    "title": "Word and Concept",
+    "type": "Match up",
+    "topic": "Cities",
+    "cover": "ink",
+    "kind": "match",
+    "cognitive": "Semantic memory, association",
+    "language": "Vocabulary",
+    "media": "Definitions",
+    "intro": "Pair each term from the urbanisation lesson with its meaning.",
+    "pairs": [
+      [
+        "Migration",
+        "The movement of people from one place to another to live"
+      ],
+      [
+        "Population density",
+        "How many people live in each square kilometre"
+      ],
+      [
+        "Infrastructure",
+        "The roads, pipes, cables and transport a place runs on"
+      ],
+      [
+        "Housing",
+        "The homes available to the people who live in a place"
+      ],
+      [
+        "Commuting",
+        "Travelling regularly between home and work"
+      ],
+      [
+        "Overcrowding",
+        "More people in a space than it was built to hold"
+      ]
     ]
   }
 ];
