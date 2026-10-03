@@ -771,111 +771,117 @@ export const games = [
     "kind": "spot",
     "cognitive": "Attention, visual comparison",
     "language": "Vocabulary",
-    "media": "Photographs",
-    "intro": "Things are missing from one photograph, and others have turned up. Click every change you find, in either picture.",
+    "media": "Drawings",
+    "intro": "Five things are different in the second picture. Something may be missing, something may have been added, something may have changed colour.",
     "scenes": [
       {
-        "title": "Flamingos in flight",
-        "a": "assets/img/diff-birds-a.jpg",
-        "b": "assets/img/diff-birds-b.jpg",
+        "title": "A park in the morning",
+        "a": "assets/img/diff-park-a.jpg",
+        "b": "assets/img/diff-park-b.jpg",
         "spots": [
           {
-            "x": 39.0,
-            "y": 43.1,
-            "rx": 10.4,
+            "x": 51.6,
+            "y": 11.0,
+            "rx": 5.3,
+            "ry": 5.0
+          },
+          {
+            "x": 32.2,
+            "y": 57.6,
+            "rx": 5.8,
+            "ry": 15.8
+          },
+          {
+            "x": 46.9,
+            "y": 86.3,
+            "rx": 3.4,
+            "ry": 4.6
+          },
+          {
+            "x": 67.2,
+            "y": 19.7,
+            "rx": 3.4,
+            "ry": 4.6
+          },
+          {
+            "x": 9.4,
+            "y": 85.1,
+            "rx": 3.4,
+            "ry": 4.6
+          }
+        ]
+      },
+      {
+        "title": "Boats in the bay",
+        "a": "assets/img/diff-bay-a.jpg",
+        "b": "assets/img/diff-bay-b.jpg",
+        "spots": [
+          {
+            "x": 87.5,
+            "y": 26.9,
+            "rx": 4.1,
+            "ry": 4.6
+          },
+          {
+            "x": 28.1,
+            "y": 33.1,
+            "rx": 3.4,
+            "ry": 4.6
+          },
+          {
+            "x": 93.8,
+            "y": 40.1,
+            "rx": 3.4,
+            "ry": 6.5
+          },
+          {
+            "x": 67.2,
+            "y": 58.1,
+            "rx": 7.2,
+            "ry": 9.6
+          },
+          {
+            "x": 81.2,
+            "y": 65.4,
+            "rx": 7.6,
+            "ry": 10.1
+          }
+        ]
+      },
+      {
+        "title": "A quiet street",
+        "a": "assets/img/diff-street-a.jpg",
+        "b": "assets/img/diff-street-b.jpg",
+        "spots": [
+          {
+            "x": 46.9,
+            "y": 9.7,
+            "rx": 4.9,
+            "ry": 4.6
+          },
+          {
+            "x": 26.6,
+            "y": 67.0,
+            "rx": 5.8,
+            "ry": 9.6
+          },
+          {
+            "x": 65.6,
+            "y": 88.7,
+            "rx": 8.3,
             "ry": 8.5
           },
           {
-            "x": 73.3,
-            "y": 46.9,
-            "rx": 27.3,
-            "ry": 11.0
+            "x": 25.0,
+            "y": 33.0,
+            "rx": 3.4,
+            "ry": 4.6
           },
           {
-            "x": 60.9,
-            "y": 34.6,
-            "rx": 10.7,
-            "ry": 9.4
-          },
-          {
-            "x": 96.1,
-            "y": 38.0,
-            "rx": 3.8,
-            "ry": 5.0
-          },
-          {
-            "x": 95.6,
-            "y": 32.8,
-            "rx": 3.8,
-            "ry": 5.0
-          }
-        ]
-      },
-      {
-        "title": "Pennants on the beach",
-        "a": "assets/img/diff-beach-a.jpg",
-        "b": "assets/img/diff-beach-b.jpg",
-        "spots": [
-          {
-            "x": 60.6,
-            "y": 21.4,
-            "rx": 7.8,
-            "ry": 7.8
-          },
-          {
-            "x": 77.8,
-            "y": 24.3,
-            "rx": 3.8,
-            "ry": 5.0
-          },
-          {
-            "x": 95.8,
-            "y": 22.9,
-            "rx": 3.8,
-            "ry": 5.8
-          },
-          {
-            "x": 47.2,
-            "y": 19.7,
-            "rx": 3.8,
-            "ry": 5.9
-          },
-          {
-            "x": 53.8,
-            "y": 19.7,
-            "rx": 3.8,
-            "ry": 5.9
-          }
-        ]
-      },
-      {
-        "title": "Gulls over the bay",
-        "a": "assets/img/diff-gulls-a.jpg",
-        "b": "assets/img/diff-gulls-b.jpg",
-        "spots": [
-          {
-            "x": 27.3,
-            "y": 31.1,
-            "rx": 7.0,
-            "ry": 17.8
-          },
-          {
-            "x": 49.1,
-            "y": 88.1,
-            "rx": 13.4,
-            "ry": 7.9
-          },
-          {
-            "x": 57.1,
-            "y": 48.8,
-            "rx": 28.0,
-            "ry": 22.5
-          },
-          {
-            "x": 38.8,
-            "y": 74.4,
-            "rx": 28.5,
-            "ry": 23.1
+            "x": 64.1,
+            "y": 55.5,
+            "rx": 7.9,
+            "ry": 16.9
           }
         ]
       }
