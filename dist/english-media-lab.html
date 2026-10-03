@@ -49,6 +49,7 @@
   --font-display: "Newsreader", Georgia, "Times New Roman", serif;
   --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
   --ease: cubic-bezier(.22, 1, .36, 1);
+  --ease-soft: cubic-bezier(.4, .14, .2, 1);
   color-scheme: light;
 }
 
@@ -57,7 +58,10 @@
    --------------------------------------------------------------- */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
 
 body {
   margin: 0;
@@ -73,6 +77,13 @@ body {
 h1, h2, h3, p { margin: 0; }
 button, input { font: inherit; color: inherit; }
 img, svg { display: block; max-width: 100%; }
+
+.card__img, .memory__tile img, .match__pic img, .spot__pane img, .stage__card--photo img {
+  opacity: 0;
+  transition: opacity .5s var(--ease-soft), transform .5s var(--ease);
+}
+.card__img.is-ready, .memory__tile img.is-ready, .match__pic img.is-ready,
+.spot__pane img.is-ready, .stage__card--photo img.is-ready { opacity: 1; }
 
 /* a single quiet gradient of the brand colour */
 body::before {
@@ -114,7 +125,24 @@ body::before {
   z-index: 50;
   background: var(--ink-band);
   color: #e9f0f7;
+  transition: box-shadow .35s var(--ease-soft);
 }
+.header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0;
+  transition: opacity .4s var(--ease-soft);
+}
+.header.is-stuck { box-shadow: 0 10px 30px rgba(8, 24, 40, .22); }
+.header.is-stuck::after { opacity: .85; }
+
+.header__inner { transition: height .35s var(--ease-soft); }
+.header.is-stuck .header__inner { height: 52px; }
 
 .header__inner,
 .main,
@@ -154,7 +182,9 @@ body::before {
   border-radius: 7px;
   background: var(--gold);
   color: #241a04;
+  transition: transform .4s var(--ease);
 }
+.brand:hover .brand__mark { transform: rotate(-6deg) scale(1.06); }
 .brand__mark svg { width: 17px; height: 17px; }
 
 .header__actions {
@@ -215,9 +245,51 @@ body::before {
    Masthead
    --------------------------------------------------------------- */
 .masthead {
-  background: var(--ink-band);
+  position: relative;
+  background:
+    radial-gradient(120% 140% at 12% -20%, rgba(74, 128, 174, .35), transparent 58%),
+    var(--ink-band);
   border-bottom: 3px solid var(--gold);
   color: #e9f0f7;
+  overflow: hidden;
+}
+.masthead::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .35), transparent);
+}
+
+.masthead__eyebrow { animation: riseIn .5s var(--ease) both; }
+.masthead__title   { animation: riseIn .6s var(--ease) .08s both; }
+.masthead__lead    { animation: riseIn .6s var(--ease) .16s both; }
+.tally             { animation: riseIn .6s var(--ease) .24s both; }
+
+/* what there is to work through */
+.tally {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 34px;
+  margin: 26px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid rgba(233, 240, 247, .18);
+}
+.tally div { display: flex; align-items: baseline; gap: 8px; }
+.tally dt {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+.tally dd {
+  margin: 0;
+  color: rgba(233, 240, 247, .72);
+  font-size: 12.5px;
+  font-weight: 550;
+  letter-spacing: .02em;
 }
 
 .masthead__inner {
@@ -308,7 +380,9 @@ body[data-section="games"]  { --hue: var(--c-games); }
   cursor: pointer;
   transition: background .18s, color .18s, border-color .18s;
 }
-.chip:hover { border-color: var(--border-strong); color: var(--text); }
+.chip { transition: background .18s, color .18s, border-color .18s, transform .18s var(--ease); }
+.chip:hover { border-color: var(--accent); color: var(--text); transform: translateY(-1px); }
+.chip:active { transform: translateY(0) scale(.97); }
 .chip[aria-pressed="true"] {
   background: var(--accent);
   border-color: var(--accent);
@@ -340,10 +414,30 @@ body[data-section="games"]  { --hue: var(--c-games); }
   overflow: hidden;
   transition: transform .28s var(--ease), box-shadow .28s var(--ease), border-color .2s;
 }
+.card {
+  position: relative;
+  isolation: isolate;
+}
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, .5) 50%, transparent 62%);
+  opacity: 0;
+  transform: translateX(-60%);
+  transition: opacity .25s var(--ease-soft);
+}
+.card:hover::after {
+  opacity: .9;
+  transform: translateX(60%);
+  transition: opacity .2s var(--ease-soft), transform .85s var(--ease-soft);
+}
 .card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   box-shadow: var(--shadow-md);
-  border-color: var(--border-strong);
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--border));
 }
 .card:active { transform: translateY(-1px); }
 
@@ -491,7 +585,12 @@ body[data-section="games"]  { --hue: var(--c-games); }
   text-align: left;
   transition: border-color .2s, background .2s, transform .2s var(--ease);
 }
-.row:hover { border-color: var(--border-strong); background: var(--bg-elevated); transform: translateX(2px); }
+.row:hover {
+  border-color: color-mix(in srgb, var(--accent) 26%, var(--border));
+  background: var(--bg-elevated);
+  transform: translateX(3px);
+  box-shadow: var(--shadow-sm);
+}
 
 .row__icon {
   flex: none;
@@ -569,7 +668,7 @@ body[data-section="games"]  { --hue: var(--c-games); }
 .section:hover .section__arrow { color: var(--hue); }
 
 .section:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   border-color: color-mix(in srgb, var(--hue) 35%, var(--border));
   box-shadow: var(--shadow-md);
   border-color: var(--border-strong);
@@ -1287,9 +1386,9 @@ body[data-section="games"]  { --hue: var(--c-games); }
 .speak.is-in { animation: liftIn .34s var(--ease); }
 
 /* content settles in when a section is opened */
-.is-enter > * { animation: riseIn .42s var(--ease) both; }
+.is-enter > * { animation: riseIn .46s var(--ease) both; }
 .is-enter .grid > *,
-.is-enter .sections > * { animation: riseIn .5s var(--ease) both; }
+.is-enter .sections > * { animation: riseIn .55s var(--ease) both; }
 .is-enter .grid > *:nth-child(2),  .is-enter .sections > *:nth-child(2)  { animation-delay: .06s; }
 .is-enter .grid > *:nth-child(3),  .is-enter .sections > *:nth-child(3)  { animation-delay: .12s; }
 .is-enter .grid > *:nth-child(4)  { animation-delay: .18s; }
@@ -1301,7 +1400,7 @@ body[data-section="games"]  { --hue: var(--c-games); }
 .is-enter .grid > *:nth-child(n+10) { animation-delay: .39s; }
 
 @keyframes riseIn {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(14px) scale(.994); }
   to   { opacity: 1; transform: none; }
 }
 
@@ -1439,13 +1538,21 @@ body[data-section="games"]  { --hue: var(--c-games); }
   cursor: pointer;
   transition: background .18s, border-color .18s, opacity .18s;
 }
-.btn:hover { background: var(--bg-elevated); }
+.btn {
+  transition: background .18s, border-color .18s, color .18s,
+              transform .18s var(--ease), box-shadow .25s var(--ease);
+}
+.btn:hover { background: var(--bg-elevated); transform: translateY(-1px); }
+.btn:active { transform: translateY(0) scale(.985); }
 .btn--primary {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--accent-text);
 }
-.btn--primary:hover { background: color-mix(in srgb, var(--accent) 88%, #000); }
+.btn--primary:hover {
+  background: color-mix(in srgb, var(--accent) 88%, #000);
+  box-shadow: 0 6px 18px rgba(13, 56, 86, .28);
+}
 .btn:disabled { opacity: .4; cursor: not-allowed; }
 
 /* --- results --- */
@@ -1608,6 +1715,8 @@ body[data-section="games"]  { --hue: var(--c-games); }
    Responsive
    --------------------------------------------------------------- */
 @media (max-width: 640px) {
+  .tally { gap: 8px 22px; }
+  .tally dt { font-size: 24px; }
   .header__inner, .main, .page-head, .filters, .footer__inner, .masthead__inner {
     width: calc(100% - 32px);
   }
@@ -1664,6 +1773,7 @@ body[data-section="games"]  { --hue: var(--c-games); }
         EnglishMediaLab is an interactive platform designed to help students improve
         their English through videos, tests, and educational games.
       </p>
+      <dl class="tally" id="tally"></dl>
     </div>
   </section>
 
@@ -3479,6 +3589,7 @@ function replay(node) {
   node.classList.remove('is-enter');
   void node.offsetWidth;
   node.classList.add('is-enter');
+  settleImages(node);
 }
 
 function renderContent() {
@@ -4613,6 +4724,7 @@ function renderTab() {
 
   document.body.dataset.section = state.tab;
   $('#masthead').hidden = !atHome;
+  if (atHome) renderTally();
   $('#page-head').hidden = atHome;
   $('#filters').hidden = focused;
   $('.search').hidden = focused;
@@ -4633,7 +4745,46 @@ function setTab(tab, { pushHash = true } = {}) {
 /* ---------------------------------------------------------------
    Wiring
    --------------------------------------------------------------- */
+/** Pictures fade up as they arrive, rather than snapping into place. */
+function settleImages(root) {
+  $$('img', root).forEach((img) => {
+    if (img.complete && img.naturalWidth) { img.classList.add('is-ready'); return; }
+    img.addEventListener('load', () => img.classList.add('is-ready'), { once: true });
+    img.addEventListener('error', () => img.classList.add('is-ready'), { once: true });
+  });
+}
+
+/** How much there is to work through, counted from the content itself. */
+function renderTally() {
+  const tally = $('#tally');
+  if (!tally || tally.childElementCount) return;
+  [[videos.length, 'video lessons'], [tests.length, 'topic tests'], [games.length, 'games']]
+    .forEach(([count, label]) => {
+      const cell = el('div');
+      cell.innerHTML = `<dt data-to="${count}">0</dt><dd>${label}</dd>`;
+      tally.append(cell);
+    });
+  $$('dt', tally).forEach((node, i) => {
+    const to = Number(node.dataset.to);
+    const from = clock() + i * 120;
+    const step = () => {
+      const t = Math.min(Math.max((clock() - from) / 700, 0), 1);
+      node.textContent = Math.round(to * (1 - Math.pow(1 - t, 3)));
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}
+
+function watchScroll() {
+  const header = $('.header');
+  const mark = () => header.classList.toggle('is-stuck', window.scrollY > 8);
+  addEventListener('scroll', mark, { passive: true });
+  mark();
+}
+
 function init() {
+  watchScroll();
   $('#home-btn').addEventListener('click', () => {
     state.run = null;
     state.play = null;

@@ -1,4 +1,4 @@
-import { videos, tests, games, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt } from './data.js?v=13';
+import { videos, tests, games, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt } from './data.js?v=14';
 
 /* ---------------------------------------------------------------
    State
@@ -133,6 +133,7 @@ function replay(node) {
   node.classList.remove('is-enter');
   void node.offsetWidth;
   node.classList.add('is-enter');
+  settleImages(node);
 }
 
 function renderContent() {
@@ -1267,6 +1268,7 @@ function renderTab() {
 
   document.body.dataset.section = state.tab;
   $('#masthead').hidden = !atHome;
+  if (atHome) renderTally();
   $('#page-head').hidden = atHome;
   $('#filters').hidden = focused;
   $('.search').hidden = focused;
@@ -1287,7 +1289,46 @@ function setTab(tab, { pushHash = true } = {}) {
 /* ---------------------------------------------------------------
    Wiring
    --------------------------------------------------------------- */
+/** Pictures fade up as they arrive, rather than snapping into place. */
+function settleImages(root) {
+  $$('img', root).forEach((img) => {
+    if (img.complete && img.naturalWidth) { img.classList.add('is-ready'); return; }
+    img.addEventListener('load', () => img.classList.add('is-ready'), { once: true });
+    img.addEventListener('error', () => img.classList.add('is-ready'), { once: true });
+  });
+}
+
+/** How much there is to work through, counted from the content itself. */
+function renderTally() {
+  const tally = $('#tally');
+  if (!tally || tally.childElementCount) return;
+  [[videos.length, 'video lessons'], [tests.length, 'topic tests'], [games.length, 'games']]
+    .forEach(([count, label]) => {
+      const cell = el('div');
+      cell.innerHTML = `<dt data-to="${count}">0</dt><dd>${label}</dd>`;
+      tally.append(cell);
+    });
+  $$('dt', tally).forEach((node, i) => {
+    const to = Number(node.dataset.to);
+    const from = clock() + i * 120;
+    const step = () => {
+      const t = Math.min(Math.max((clock() - from) / 700, 0), 1);
+      node.textContent = Math.round(to * (1 - Math.pow(1 - t, 3)));
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}
+
+function watchScroll() {
+  const header = $('.header');
+  const mark = () => header.classList.toggle('is-stuck', window.scrollY > 8);
+  addEventListener('scroll', mark, { passive: true });
+  mark();
+}
+
 function init() {
+  watchScroll();
   $('#home-btn').addEventListener('click', () => {
     state.run = null;
     state.play = null;

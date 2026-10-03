@@ -32,9 +32,12 @@ shadows. Deep navy carries every heading rule, icon and marker; gold marks the
 brand and the band's edge; green and red are kept for right and wrong answers. `--c-videos`, `--c-tests` and `--c-games` all point at the accent, so every section
 reads in the same blue; give one of them its own value to colour that section apart.
 
-Motion: content rises in when a section opens, cards follow in a short stagger, a
-matched pair pops, and the score ring fills while the number counts up. Everything
-stops for `prefers-reduced-motion`.
+Motion: the welcome arrives in order, the header condenses and lights a gold
+hairline once the page moves under it, content rises in when a section opens with
+the cards following in a short stagger, pictures fade up as they load rather than
+snapping in, a light sweeps across a card under the pointer, a matched pair pops,
+and the score ring fills while the number counts up. Everything stops for
+`prefers-reduced-motion`.
 
 ## Adding content
 
