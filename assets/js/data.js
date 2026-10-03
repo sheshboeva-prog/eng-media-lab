@@ -839,6 +839,50 @@ export const games = [
         ],
         "answer": 1,
         "why": "Culture shock is a normal stage of adjusting. Learning the customs and meeting people shortens it."
+      },
+      {
+        "scene": "A town builds a wide new road into the centre to ease the traffic. Driving in becomes quicker than before.",
+        "options": [
+          "Fewer people drive into the centre",
+          "More people choose to drive, and the jams return",
+          "Public transport use rises",
+          "The centre becomes quieter"
+        ],
+        "answer": 1,
+        "why": "Making driving easier invites more of it. Within a few years the new road fills up, which is why planners call it induced demand."
+      },
+      {
+        "scene": "A student answers every practice test with the book open beside them. The scores are excellent.",
+        "options": [
+          "The scores predict how they will do in a closed-book exam",
+          "The practice is building recall from memory",
+          "The exam itself will feel much harder than the practice did",
+          "There is nothing to change before the exam"
+        ],
+        "answer": 2,
+        "why": "Recognising an answer on the page is far easier than retrieving it. The practice never tested the thing the exam will."
+      },
+      {
+        "scene": "A hotel opens on a quiet stretch of coast. The following year, three more open beside it.",
+        "options": [
+          "The coast stays as quiet as it was",
+          "Local jobs and prices both rise",
+          "The hotels drive each other out of business",
+          "Visitor numbers fall"
+        ],
+        "answer": 1,
+        "why": "Tourism brings work and spending, and it pushes up what everything costs for the people already living there."
+      },
+      {
+        "scene": "A news site changes nothing about its reporting but starts writing far more dramatic headlines.",
+        "options": [
+          "Clicks rise while trust in the site falls",
+          "Readers trust the site more",
+          "Reporting quality improves",
+          "Clicks and trust both rise"
+        ],
+        "answer": 0,
+        "why": "The headline wins the click, then the article underneath fails to deliver on it, and readers learn to discount the source."
       }
     ]
   },
@@ -874,6 +918,22 @@ export const games = [
       [
         "Demand",
         "How much of a product people want to buy"
+      ],
+      [
+        "Investment",
+        "Money put into a business to help it grow"
+      ],
+      [
+        "Competitor",
+        "Another business selling to the same customers"
+      ],
+      [
+        "Turnover",
+        "The total value of what a business sells in a period"
+      ],
+      [
+        "Stock",
+        "The goods a business is holding, ready to sell"
       ]
     ],
     "cognitive": "Semantic memory",
@@ -924,6 +984,30 @@ export const games = [
       {
         "text": "Broken sleep from late-night screens",
         "group": 1
+      },
+      {
+        "text": "Reading one source and treating it as the whole story",
+        "group": 1
+      },
+      {
+        "text": "Learning a skill from people who do it for a living",
+        "group": 0
+      },
+      {
+        "text": "Arguing with strangers who will never change their minds",
+        "group": 1
+      },
+      {
+        "text": "Keeping a record of work you are proud of",
+        "group": 0
+      },
+      {
+        "text": "Checking your phone the moment you wake up",
+        "group": 1
+      },
+      {
+        "text": "Finding a job through someone you have never met in person",
+        "group": 0
       }
     ],
     "cognitive": "Evaluation, judgement",
@@ -966,9 +1050,7 @@ export const games = [
       {
         "text": "Passport",
         "img": "assets/img/trv-passport.jpg"
-      }
-    ],
-    "extra": [
+      },
       {
         "text": "Factory chimneys",
         "img": "assets/img/env-pollution.jpg"
@@ -976,7 +1058,9 @@ export const games = [
       {
         "text": "Cleared forest",
         "img": "assets/img/env-deforestation.jpg"
-      },
+      }
+    ],
+    "extra": [
       {
         "text": "Exhaust pipe",
         "img": "assets/img/env-emissions.jpg"
@@ -992,6 +1076,18 @@ export const games = [
       {
         "text": "Suitcase",
         "img": "assets/img/trv-suitcase.jpg"
+      },
+      {
+        "text": "Aeroplane",
+        "img": "assets/img/trv-plane.jpg"
+      },
+      {
+        "text": "Hotel lobby",
+        "img": "assets/img/trv-lobby.jpg"
+      },
+      {
+        "text": "Paper map",
+        "img": "assets/img/trv-map.jpg"
       }
     ]
   },
@@ -1014,39 +1110,78 @@ export const games = [
     "items": [
       {
         "text": "Water boils at 100 degrees Celsius at sea level",
-        "group": 0
+        "group": 0,
+        "why": "It can be measured, and the measurement comes out the same every time."
       },
       {
         "text": "The city recorded 31 days above 35 degrees last summer",
-        "group": 0
+        "group": 0,
+        "why": "A counted record. Anyone can check it against the weather data."
       },
       {
         "text": "Three in four households in the survey owned a bicycle",
-        "group": 0
+        "group": 0,
+        "why": "It reports what a named survey found, so it can be verified."
+      },
+      {
+        "text": "English has more speakers as a second language than as a first",
+        "group": 0,
+        "why": "A counted comparison that language statistics can confirm."
+      },
+      {
+        "text": "The video lasts eleven minutes",
+        "group": 0,
+        "why": "A plain measurement of the thing in front of you."
       },
       {
         "text": "Winter is the most pleasant season of the year",
-        "group": 1
+        "group": 1,
+        "why": "Pleasant to whom? It states a preference, not something that can be measured."
       },
       {
         "text": "City life is far more interesting than village life",
-        "group": 1
+        "group": 1,
+        "why": "Interesting is a judgement. Someone else can disagree and neither is wrong."
       },
       {
         "text": "Learning English is easier than learning Spanish",
-        "group": 1
+        "group": 1,
+        "why": "Easier depends on the learner and their first language. It is a view."
+      },
+      {
+        "text": "Films were better before streaming arrived",
+        "group": 1,
+        "why": "Better by whose standard? This is taste stated as if it were fact."
+      },
+      {
+        "text": "Mornings are the only sensible time to study",
+        "group": 1,
+        "why": "A personal habit presented as a rule for everyone."
       },
       {
         "text": "This drink removes every toxin from your body in a day",
-        "group": 2
+        "group": 2,
+        "why": "A dramatic promise with no study, no measure and no source behind it."
       },
       {
         "text": "Scientists have proven that the new app doubles memory",
-        "group": 2
+        "group": 2,
+        "why": "Which scientists, and in what study? Naming nobody is the warning sign."
       },
       {
         "text": "Everybody knows that electric cars pollute more than petrol ones",
-        "group": 2
+        "group": 2,
+        "why": "Everybody knows is not evidence. The claim avoids saying where it came from."
+      },
+      {
+        "text": "Nine out of ten teachers recommend this method",
+        "group": 2,
+        "why": "Ten out of which teachers, asked by whom? A number without a source proves nothing."
+      },
+      {
+        "text": "Studies show that reading at night ruins your eyesight",
+        "group": 2,
+        "why": "Studies show is doing all the work here, and not one study is named."
       }
     ]
   },
@@ -1132,6 +1267,24 @@ export const games = [
           "Average temperatures climb",
           "Droughts and heatwaves last longer than they used to"
         ]
+      },
+      {
+        "title": "Deforestation",
+        "steps": [
+          "Forest is cleared for farmland and timber",
+          "The soil loses the roots that were holding it together",
+          "Heavy rain washes the topsoil into the rivers",
+          "The land yields less with every season that passes"
+        ]
+      },
+      {
+        "title": "Social media",
+        "steps": [
+          "A feed learns which posts hold your attention longest",
+          "It serves more of whatever kept you scrolling",
+          "Time on the app climbs without you deciding to spend it",
+          "Sleep and attention elsewhere start to suffer"
+        ]
       }
     ]
   },
@@ -1170,6 +1323,18 @@ export const games = [
       [
         "Overcrowding",
         "More people in a space than it was built to hold"
+      ],
+      [
+        "Suburb",
+        "A residential area on the outer edge of a city"
+      ],
+      [
+        "Public transport",
+        "Buses, trams and trains shared by everyone"
+      ],
+      [
+        "Green space",
+        "Parks and gardens kept open inside a built-up area"
       ]
     ]
   }

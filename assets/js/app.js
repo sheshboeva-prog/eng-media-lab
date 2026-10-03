@@ -10,7 +10,10 @@ const TABS = {
   games:   { title: 'Games',   sub: 'Interactive activities that play right here on the page.' },
 };
 
-const state = { tab: 'home', query: '', topic: 'all', run: null, play: null };
+let savedLevel = 'standard';
+try { savedLevel = localStorage.getItem('eml-level') || 'standard'; } catch { /* storage off */ }
+
+const state = { tab: 'home', query: '', topic: 'all', run: null, play: null, level: savedLevel };
 
 const $  = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
@@ -70,6 +73,11 @@ function testRow(item) {
   return row;
 }
 
+const bestLabel = (game) => {
+  const best = readBest(game);
+  return best ? ` · best ${best.correct}/${best.total}` : '';
+};
+
 function gameCard(item) {
   const card = el('button', { className: 'card', type: 'button' });
   card.innerHTML = `
@@ -85,7 +93,7 @@ function gameCard(item) {
         <span class="dot"></span>
         <span>${item.type}</span>
       </div>
-      <p class="card__skill">${item.cognitive}</p>
+      <p class="card__skill">${item.cognitive}${bestLabel(item)}</p>
     </div>`;
   card.addEventListener('click', () => startGame(item));
   return card;
@@ -245,19 +253,21 @@ function renderHome() {
 }
 
 /* ---------------------------------------------------------------
-   Game player — the activity runs in the page, nothing navigates away
+   Games — levels, engines and one shared result
    --------------------------------------------------------------- */
-function startGame(game) {
-  state.play = game;
-  focusTab('games');
-  renderTab();
-  $('#main').scrollIntoView({ block: 'start' });
-}
+const LEVELS = ['easy', 'standard', 'hard'];
+const LEVEL_LABEL = { easy: 'Easy', standard: 'Standard', hard: 'Hard' };
+const LEVELLED = new Set(['match', 'sort', 'predict', 'chain', 'memory']);
 
-function exitGame() {
-  state.play = null;
-  renderTab();
-}
+/** How much of a game's material each level uses. */
+const SIZES = {
+  match:   { easy: 4, standard: 6, hard: 99 },
+  sort:    { easy: 6, standard: 9, hard: 99 },
+  predict: { easy: 4, standard: 6, hard: 99 },
+  chain:   { easy: 2, standard: 3, hard: 99 },
+  memory:  { easy: 4, standard: 6, hard: 8 },
+};
+const STUDY_SECONDS = { easy: 16, standard: 13, hard: 10 };
 
 const shuffle = (list) => {
   const out = [...list];
@@ -267,6 +277,58 @@ const shuffle = (list) => {
   }
   return out;
 };
+
+const portion = (list, kind) => shuffle(list).slice(0, SIZES[kind][state.level]);
+const clock = () => performance.now();
+const secondsSince = (from) => Math.max(1, Math.round((clock() - from) / 1000));
+const spell = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+
+const bestKey = (game) => `eml-best-${game.id}-${state.level}`;
+const readBest = (game) => {
+  try { return JSON.parse(localStorage.getItem(bestKey(game))); } catch { return null; }
+};
+const writeBest = (game, data) => {
+  try { localStorage.setItem(bestKey(game), JSON.stringify(data)); } catch { /* storage off */ }
+};
+
+function startGame(game) {
+  state.play = game;
+  focusTab('games');
+  renderTab();
+  $('#main').scrollIntoView({ block: 'start' });
+}
+
+/** Started from the home page, an activity still belongs to its own tab. */
+function focusTab(tab) {
+  state.tab = tab;
+  if (location.hash !== `#/${tab}`) location.hash = `#/${tab}`;
+}
+
+function exitGame() {
+  state.play = null;
+  renderTab();
+}
+
+function setLevel(level) {
+  state.level = level;
+  try { localStorage.setItem('eml-level', level); } catch { /* storage off */ }
+  renderContent();
+}
+
+function levelPicker(game) {
+  const wrap = el('div', { className: 'levels', role: 'group' });
+  wrap.setAttribute('aria-label', 'Difficulty');
+  wrap.append(el('span', { className: 'levels__label', textContent: 'Level' }));
+  LEVELS.forEach((level) => {
+    const chip = el('button', { className: 'chip', type: 'button', textContent: LEVEL_LABEL[level] });
+    chip.setAttribute('aria-pressed', String(state.level === level));
+    chip.addEventListener('click', () => setLevel(level));
+    wrap.append(chip);
+  });
+  const best = readBest(game);
+  if (best) wrap.append(el('span', { className: 'levels__best', textContent: `Best ${best.correct}/${best.total}` }));
+  return wrap;
+}
 
 function playerShell(game, body) {
   const wrap = el('section', { className: 'player' });
@@ -283,21 +345,114 @@ function playerShell(game, body) {
     </dl>
     <div class="board"></div>`;
   $('[data-exit]', wrap).addEventListener('click', exitGame);
+  if (LEVELLED.has(game.kind)) $('.board', wrap).before(levelPicker(game));
   $('.board', wrap).append(body);
   return wrap;
 }
 
 function renderPlayer() {
   const game = state.play;
-  const engines = { match: matchGame, sort: sortGame, wheel: wheelGame, cards: cardsGame,
-                    predict: predictGame, memory: memoryGame, chain: chainGame };
+  const engines = {
+    match: matchGame, sort: sortGame, wheel: wheelGame, cards: cardsGame,
+    predict: predictGame, memory: memoryGame, chain: chainGame,
+  };
   return playerShell(game, engines[game.kind](game));
 }
 
-/* --- match up: click a word, then click its meaning --- */
+/** Every game that can be scored ends here. */
+function gameResult(game, { correct, total, seconds, review = [], extra = '' }) {
+  const wrong = total - correct;
+  const previous = readBest(game);
+  const beaten = !previous || correct > previous.correct
+    || (correct === previous.correct && seconds < previous.seconds);
+  if (beaten) writeBest(game, { correct, total, seconds });
+
+  const wrap = el('section', { className: 'result' });
+  wrap.innerHTML = `
+    <div class="score">
+      <div class="score__ring" style="--pct:0">
+        <span class="score__num"><span data-count>0</span><small>/${total}</small></span>
+      </div>
+      <div class="score__side">
+        <p class="score__line"><span class="score__dot score__dot--ok"></span>${spell(correct, 'right')}</p>
+        <p class="score__line"><span class="score__dot score__dot--no"></span>${spell(wrong, 'missed')}</p>
+        <p class="score__verdict">
+          ${LEVEL_LABEL[state.level]} level, ${spell(seconds, 'second')}${extra ? `, ${extra}` : ''}.
+          ${beaten ? '<strong>Your best so far.</strong>'
+                   : `Your best here is ${previous.correct}/${previous.total}.`}
+        </p>
+      </div>
+    </div>
+    <ol class="review"></ol>
+    <div class="runner__actions"></div>`;
+
+  const list = $('.review', wrap);
+  review.forEach((item) => {
+    const node = el('li', { className: `review__item ${item.ok ? 'is-ok' : 'is-no'}` });
+    node.innerHTML = `
+      <span class="review__mark">${item.ok
+        ? icon('<path d="M20 6L9 17l-5-5" />')
+        : icon('<path d="M6 6l12 12M18 6L6 18" />')}</span>
+      <div class="review__body">
+        <p class="review__q">${item.q}</p>
+        ${item.your ? `<p class="review__answer"><span class="review__label">You said</span>${item.your}</p>` : ''}
+        ${item.right ? `<p class="review__answer review__answer--right"><span class="review__label">Answer</span>${item.right}</p>` : ''}
+        ${item.why ? `<p class="review__why">${item.why}</p>` : ''}
+      </div>`;
+    list.append(node);
+  });
+  if (!review.length) list.remove();
+
+  const actions = $('.runner__actions', wrap);
+  const again = el('button', { className: 'btn', type: 'button', textContent: 'Play again' });
+  again.addEventListener('click', () => { state.play = game; renderContent(); });
+  actions.append(again);
+
+  const next = LEVELS[LEVELS.indexOf(state.level) + 1];
+  if (next && LEVELLED.has(game.kind)) {
+    const harder = el('button', { className: 'btn btn--primary', type: 'button', textContent: `Step up to ${LEVEL_LABEL[next]}` });
+    harder.addEventListener('click', () => setLevel(next));
+    actions.append(harder);
+  } else {
+    const back = el('button', { className: 'btn btn--primary', type: 'button', textContent: 'All games' });
+    back.addEventListener('click', exitGame);
+    actions.append(back);
+  }
+
+  const ring = $('.score__ring', wrap);
+  const number = $('[data-count]', wrap);
+  requestAnimationFrame(() => {
+    ring.style.setProperty('--pct', (correct / total) * 100);
+    const from = clock();
+    const step = () => {
+      const t = Math.min((clock() - from) / 900, 1);
+      number.textContent = Math.round(correct * (1 - Math.pow(1 - t, 3)));
+      if (t < 1) requestAnimationFrame(step);
+      else number.textContent = correct;
+    };
+    if (correct) requestAnimationFrame(step);
+  });
+  // frames stop in a hidden tab, so show the score either way
+  setTimeout(() => { number.textContent = correct; }, 1200);
+  return wrap;
+}
+
+const finish = (holder, node) => {
+  holder.replaceChildren(node);
+  holder.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+};
+
+/* --- match up: click a word, then click what belongs with it --- */
 function matchGame(game) {
+  const holder = el('div', { className: 'game' });
   const board = el('div', { className: 'match' });
-  const state_ = { picked: null, done: 0, misses: 0 };
+  const pairs = portion(game.pairs, 'match');
+  const started = clock();
+  let picked = null;
+  let done = 0;
+  let misses = 0;
+
+  const status = el('p', { className: 'board__status', textContent: `0 of ${pairs.length} matched` });
 
   const column = (side, entries) => {
     const picture = game.pictures && side === 'meaning';
@@ -314,40 +469,36 @@ function matchGame(game) {
     return col;
   };
 
-  const status = el('p', { className: 'board__status', textContent: `0 of ${game.pairs.length} matched` });
-
   function pick(btn) {
     if (btn.classList.contains('is-done')) return;
-    if (!state_.picked) {
-      state_.picked = btn;
-      btn.classList.add('is-picked');
-      return;
-    }
-    if (state_.picked === btn) {
-      btn.classList.remove('is-picked');
-      state_.picked = null;
-      return;
-    }
-    if (state_.picked.dataset.side === btn.dataset.side) {
-      state_.picked.classList.remove('is-picked');
-      state_.picked = btn;
+    if (!picked) { picked = btn; btn.classList.add('is-picked'); return; }
+    if (picked === btn) { btn.classList.remove('is-picked'); picked = null; return; }
+    if (picked.dataset.side === btn.dataset.side) {
+      picked.classList.remove('is-picked');
+      picked = btn;
       btn.classList.add('is-picked');
       return;
     }
 
-    const first = state_.picked;
-    state_.picked = null;
+    const first = picked;
+    picked = null;
     first.classList.remove('is-picked');
 
     if (first.dataset.key === btn.dataset.key) {
       [first, btn].forEach((n) => n.classList.add('is-done'));
-      state_.done += 1;
-      status.textContent = state_.done === game.pairs.length
-        ? `All ${game.pairs.length} matched${state_.misses ? ` after ${state_.misses} wrong ${state_.misses === 1 ? 'try' : 'tries'}` : ' first time'}.`
-        : `${state_.done} of ${game.pairs.length} matched`;
-      if (state_.done === game.pairs.length) status.classList.add('is-done');
+      done += 1;
+      status.textContent = `${done} of ${pairs.length} matched`;
+      if (done === pairs.length) {
+        finish(holder, gameResult(game, {
+          correct: pairs.length,
+          total: pairs.length,
+          seconds: secondsSince(started),
+          extra: misses ? spell(misses, 'wrong try') : 'no wrong tries',
+          review: game.pictures ? [] : pairs.map(([term, meaning]) => ({ ok: true, q: term, right: meaning })),
+        }));
+      }
     } else {
-      state_.misses += 1;
+      misses += 1;
       [first, btn].forEach((n) => {
         n.classList.add('is-wrong');
         setTimeout(() => n.classList.remove('is-wrong'), 420);
@@ -355,23 +506,24 @@ function matchGame(game) {
     }
   }
 
-  const left = game.pairs.map(([term], i) => ({ text: term, key: String(i) }));
-  const right = game.pairs.map(([, answer], i) => ({ text: answer, key: String(i) }));
+  const left = pairs.map(([term], i) => ({ text: term, key: String(i) }));
+  const right = pairs.map(([, answer], i) => ({ text: answer, key: String(i) }));
   board.append(column('term', shuffle(left)), column('meaning', shuffle(right)));
   if (game.pictures) board.classList.add('match--pictures');
 
-  const holder = el('div', { className: 'game' });
-  holder.append(board, status, replayButton(game));
+  holder.append(board, status);
   return holder;
 }
 
-/* --- group sort: one item at a time, straight into a bin --- */
+/* --- group sort: one card at a time, straight into a bin --- */
 function sortGame(game) {
-  const order = shuffle(game.items.map((item, i) => ({ ...item, i })));
   const holder = el('div', { className: 'game' });
+  const order = portion(game.items, 'sort');
   const bins = el('div', { className: 'bins' });
   const stage = el('div', { className: 'stage' });
   const status = el('p', { className: 'board__status' });
+  const started = clock();
+  const review = [];
   let at = 0;
   let right = 0;
 
@@ -387,10 +539,8 @@ function sortGame(game) {
     const item = order[at];
     status.textContent = `${at} of ${order.length} sorted`;
     const card = el('div', { className: `stage__card${item.img ? ' stage__card--photo' : ''}` });
-    card.innerHTML = item.img
-      ? `<img src="${item.img}" alt="" /><span class="stage__caption">${item.text}</span>`
-      : '';
-    if (!item.img) card.textContent = item.text;
+    if (item.img) card.innerHTML = `<img src="${item.img}" alt="" /><span class="stage__caption">${item.text}</span>`;
+    else card.textContent = item.text;
     stage.replaceChildren(card);
   }
 
@@ -399,26 +549,241 @@ function sortGame(game) {
     const item = order[at];
     const ok = choice === item.group;
     if (ok) right += 1;
+    else {
+      review.push({
+        ok: false,
+        q: item.text,
+        your: game.groups[choice],
+        right: game.groups[item.group],
+        why: item.why || '',
+      });
+    }
     const chip = el('span', { className: `chip-item ${ok ? 'is-ok' : 'is-no'}` });
-    chip.innerHTML = item.img
-      ? `<img class="chip-item__thumb" src="${item.img}" alt="" />${item.text}`
-      : item.text;
+    chip.innerHTML = item.img ? `<img class="chip-item__thumb" src="${item.img}" alt="" />${item.text}` : item.text;
     $('.bin__items', binNodes[item.group]).append(chip);
     at += 1;
-    if (at < order.length) {
-      draw();
-    } else {
-      stage.replaceChildren(el('p', {
-        className: 'stage__done',
-        textContent: `${right} of ${order.length} in the right place.`,
-      }));
-      status.textContent = 'Every card sorted. Wrong ones sit in the group they belonged to.';
-      status.classList.add('is-done');
-    }
+    if (at < order.length) draw();
+    else finish(holder, gameResult(game, { correct: right, total: order.length, seconds: secondsSince(started), review }));
   }
 
   draw();
-  holder.append(stage, bins, status, replayButton(game));
+  holder.append(stage, bins, status);
+  return holder;
+}
+
+/* --- predict the next: a situation, then what follows --- */
+function predictGame(game) {
+  const holder = el('div', { className: 'game' });
+  const order = portion(game.items, 'predict');
+  const stage = el('div', { className: 'predict' });
+  const status = el('p', { className: 'board__status' });
+  const started = clock();
+  const review = [];
+  let at = 0;
+  let right = 0;
+
+  function draw() {
+    status.textContent = `Situation ${at + 1} of ${order.length}`;
+    const item = order[at];
+    const scene = el('p', { className: 'predict__scene', textContent: item.scene });
+    const list = el('div', { className: 'predict__options' });
+    item.options.forEach((text, i) => {
+      const btn = el('button', { className: 'opt', type: 'button' });
+      btn.innerHTML = `<span class="opt__letter">${LETTERS[i]}</span><span class="opt__text">${text}</span>`;
+      btn.addEventListener('click', () => answer(i));
+      list.append(btn);
+    });
+    stage.replaceChildren(scene, list);
+  }
+
+  function answer(choice) {
+    const item = order[at];
+    const ok = choice === item.answer;
+    if (ok) right += 1;
+    else {
+      review.push({
+        ok: false,
+        q: item.scene,
+        your: item.options[choice],
+        right: item.options[item.answer],
+        why: item.why,
+      });
+    }
+    $$('.opt', stage).forEach((b, i) => {
+      b.disabled = true;
+      if (i === item.answer) b.classList.add('is-right');
+      else if (i === choice) b.classList.add('is-wrong');
+    });
+    const note = el('div', { className: `predict__why ${ok ? 'is-ok' : 'is-no'}` });
+    note.innerHTML = `<strong>${ok ? 'That follows.' : 'Not quite.'}</strong> ${item.why}`;
+    const next = el('button', {
+      className: 'btn btn--primary',
+      type: 'button',
+      textContent: at === order.length - 1 ? 'See how you did' : 'Next situation',
+    });
+    next.addEventListener('click', () => {
+      at += 1;
+      if (at < order.length) draw();
+      else finish(holder, gameResult(game, { correct: right, total: order.length, seconds: secondsSince(started), review }));
+    });
+    stage.append(note, el('div', { className: 'runner__actions' }, [next]));
+  }
+
+  draw();
+  holder.append(stage, status);
+  return holder;
+}
+
+/* --- memory challenge: look, then remember --- */
+function memoryGame(game) {
+  const holder = el('div', { className: 'game' });
+  const stage = el('div', { className: 'memory' });
+  const status = el('p', { className: 'board__status' });
+  const actions = el('div', { className: 'runner__actions runner__actions--centre' });
+  const shown = portion(game.shown, 'memory');
+  const spare = shuffle([...game.shown.filter((i) => !shown.includes(i)), ...game.extra]).slice(0, shown.length);
+  const seconds = STUDY_SECONDS[state.level];
+  let timer = null;
+  let started = clock();
+
+  const tile = (item, extra = '') => `
+    <div class="memory__tile ${extra}" data-text="${item.text}">
+      <img src="${item.img}" alt="" loading="lazy" />
+      <span>${item.text}</span>
+    </div>`;
+
+  function study() {
+    let left = seconds;
+    stage.innerHTML = `<div class="memory__grid">${shuffle(shown).map((i) => tile(i)).join('')}</div>`;
+    status.textContent = `Look closely. ${spell(left, 'second')} left.`;
+    const ready = el('button', { className: 'btn', type: 'button', textContent: 'I am ready' });
+    ready.addEventListener('click', () => { clearInterval(timer); recall(); });
+    actions.replaceChildren(ready);
+    timer = setInterval(() => {
+      left -= 1;
+      status.textContent = `Look closely. ${spell(Math.max(left, 0), 'second')} left.`;
+      if (left <= 0) { clearInterval(timer); recall(); }
+    }, 1000);
+  }
+
+  function recall() {
+    started = clock();
+    const pool = shuffle([...shown, ...spare]);
+    const picked = new Set();
+    stage.innerHTML = `<div class="memory__grid memory__grid--pick">${pool.map((i) => tile(i, 'is-pickable')).join('')}</div>`;
+    status.textContent = `Pick the ${shown.length} you saw. 0 chosen.`;
+    $$('.memory__tile', stage).forEach((node) => {
+      node.addEventListener('click', () => {
+        if (node.classList.contains('is-marked')) return;
+        const text = node.dataset.text;
+        if (picked.has(text)) { picked.delete(text); node.classList.remove('is-picked'); }
+        else { picked.add(text); node.classList.add('is-picked'); }
+        status.textContent = `Pick the ${shown.length} you saw. ${picked.size} chosen.`;
+      });
+    });
+
+    const check = el('button', { className: 'btn btn--primary', type: 'button', textContent: 'Check my answer' });
+    check.addEventListener('click', () => {
+      const wanted = new Set(shown.map((i) => i.text));
+      const review = [];
+      let right = 0;
+      $$('.memory__tile', stage).forEach((node) => {
+        const was = wanted.has(node.dataset.text);
+        const chose = picked.has(node.dataset.text);
+        node.classList.add('is-marked');
+        if (was && chose) { node.classList.add('is-ok'); right += 1; }
+        else if (chose) {
+          node.classList.add('is-no');
+          review.push({ ok: false, q: node.dataset.text, your: 'You picked it', right: 'It was not in the set' });
+        } else if (was) {
+          node.classList.add('is-missed');
+          review.push({ ok: false, q: node.dataset.text, your: 'You left it out', right: 'It was in the set' });
+        }
+      });
+      finish(holder, gameResult(game, { correct: right, total: shown.length, seconds: secondsSince(started), review }));
+    });
+    actions.replaceChildren(check);
+  }
+
+  study();
+  holder.append(stage, status, actions);
+  return holder;
+}
+
+/* --- cause and effect: put the chain back in order --- */
+function chainGame(game) {
+  const holder = el('div', { className: 'game' });
+  const chains = portion(game.chains, 'chain');
+  const stage = el('div', { className: 'chain' });
+  const status = el('p', { className: 'board__status' });
+  const actions = el('div', { className: 'runner__actions runner__actions--centre' });
+  const started = clock();
+  const review = [];
+  let at = 0;
+  let scored = 0;
+
+  function draw() {
+    const chain = chains[at];
+    const chosen = [];
+    status.textContent = `Chain ${at + 1} of ${chains.length}`;
+    stage.innerHTML = `
+      <p class="chain__title">${chain.title}</p>
+      <ol class="chain__built"></ol>
+      <div class="chain__pool"></div>`;
+
+    const built = $('.chain__built', stage);
+    const pool = $('.chain__pool', stage);
+
+    shuffle(chain.steps).forEach((step) => {
+      const chip = el('button', { className: 'chain__step', type: 'button', textContent: step });
+      chip.addEventListener('click', () => {
+        if (chip.disabled) return;
+        chip.disabled = true;
+        chosen.push(step);
+        built.append(el('li', { className: 'chain__slot', textContent: step }));
+        if (chosen.length === chain.steps.length) check(chain, chosen, built);
+      });
+      pool.append(chip);
+    });
+    actions.replaceChildren();
+  }
+
+  function check(chain, chosen, built) {
+    let right = 0;
+    $$('.chain__slot', built).forEach((slot, i) => {
+      const ok = chosen[i] === chain.steps[i];
+      slot.classList.add(ok ? 'is-ok' : 'is-no');
+      if (ok) right += 1;
+    });
+    scored += right;
+    if (right < chain.steps.length) {
+      review.push({
+        ok: false,
+        q: chain.title,
+        your: `${right} of ${chain.steps.length} steps in the right place`,
+        right: chain.steps.join(' → '),
+      });
+    }
+    status.textContent = `${right} of ${chain.steps.length} in the right place.`;
+    const last = at === chains.length - 1;
+    const next = el('button', {
+      className: 'btn btn--primary',
+      type: 'button',
+      textContent: last ? 'See how you did' : 'Next chain',
+    });
+    next.addEventListener('click', () => {
+      at += 1;
+      if (at < chains.length) draw();
+      else {
+        const total = chains.reduce((n, c) => n + c.steps.length, 0);
+        finish(holder, gameResult(game, { correct: scored, total, seconds: secondsSince(started), review }));
+      }
+    });
+    actions.replaceChildren(next);
+  }
+
+  draw();
+  holder.append(stage, status, actions);
   return holder;
 }
 
@@ -477,9 +842,10 @@ function wheelGame(game) {
     spin.disabled = true;
     prompt.classList.remove('is-live');
     const landing = Math.floor(Math.random() * slices);
-    const target = turn + Math.PI * 8 + (Math.PI * 2 - ((landing + 0.5) / slices) * Math.PI * 2) - (turn % (Math.PI * 2)) - Math.PI / 2;
+    const target = turn + Math.PI * 8 + (Math.PI * 2 - ((landing + 0.5) / slices) * Math.PI * 2)
+      - (turn % (Math.PI * 2)) - Math.PI / 2;
     const from = turn;
-    const started = performance.now();
+    const startedAt = performance.now();
     let settled = false;
 
     const settle = () => {
@@ -495,7 +861,7 @@ function wheelGame(game) {
     };
 
     const run = (now) => {
-      const t = Math.min((now - started) / 3200, 1);
+      const t = Math.min((now - startedAt) / 3200, 1);
       turn = from + (target - from) * (1 - Math.pow(1 - t, 4));
       paint(turn);
       if (t < 1) requestAnimationFrame(run);
@@ -541,218 +907,6 @@ function cardsGame(game) {
   return holder;
 }
 
-/* --- predict the next: a situation, then what follows --- */
-function predictGame(game) {
-  const holder = el('div', { className: 'game' });
-  const order = shuffle(game.items);
-  const status = el('p', { className: 'board__status' });
-  const stage = el('div', { className: 'predict' });
-  let at = 0;
-  let right = 0;
-
-  function draw() {
-    status.textContent = `Situation ${at + 1} of ${order.length}`;
-    const item = order[at];
-    stage.replaceChildren();
-    const scene = el('p', { className: 'predict__scene', textContent: item.scene });
-    const list = el('div', { className: 'predict__options' });
-    item.options.forEach((text, i) => {
-      const btn = el('button', { className: 'opt', type: 'button' });
-      btn.innerHTML = `<span class="opt__letter">${LETTERS[i]}</span><span class="opt__text">${text}</span>`;
-      btn.addEventListener('click', () => answer(i));
-      list.append(btn);
-    });
-    stage.append(scene, list);
-  }
-
-  function answer(choice) {
-    const item = order[at];
-    const ok = choice === item.answer;
-    if (ok) right += 1;
-    $$('.opt', stage).forEach((b, i) => {
-      b.disabled = true;
-      if (i === item.answer) b.classList.add('is-right');
-      else if (i === choice) b.classList.add('is-wrong');
-    });
-    const note = el('div', { className: `predict__why ${ok ? 'is-ok' : 'is-no'}` });
-    note.innerHTML = `<strong>${ok ? 'That follows.' : 'Not quite.'}</strong> ${item.why}`;
-    const next = el('button', {
-      className: 'btn btn--primary',
-      type: 'button',
-      textContent: at === order.length - 1 ? 'See how you did' : 'Next situation',
-    });
-    next.addEventListener('click', () => {
-      at += 1;
-      if (at < order.length) draw();
-      else finish();
-    });
-    stage.append(note, el('div', { className: 'runner__actions' }, [next]));
-  }
-
-  function finish() {
-    stage.replaceChildren(el('p', {
-      className: 'stage__done',
-      textContent: `${right} of ${order.length} predictions right.`,
-    }));
-    status.textContent = 'Every situation answered.';
-    status.classList.add('is-done');
-  }
-
-  draw();
-  holder.append(stage, status, replayButton(game));
-  return holder;
-}
-
-/* --- memory challenge: look, then remember --- */
-function memoryGame(game) {
-  const holder = el('div', { className: 'game' });
-  const stage = el('div', { className: 'memory' });
-  const status = el('p', { className: 'board__status' });
-  const actions = el('div', { className: 'runner__actions runner__actions--centre' });
-  let timer = null;
-
-  const tile = (item, extra = '') => `
-    <div class="memory__tile ${extra}" data-text="${item.text}">
-      <img src="${item.img}" alt="" loading="lazy" />
-      <span>${item.text}</span>
-    </div>`;
-
-  function study() {
-    let left = game.seconds;
-    stage.innerHTML = `<div class="memory__grid">${shuffle(game.shown).map((i) => tile(i)).join('')}</div>`;
-    status.textContent = `Look closely. ${left} seconds left.`;
-    const done = el('button', { className: 'btn', type: 'button', textContent: 'I am ready' });
-    done.addEventListener('click', () => { clearInterval(timer); recall(); });
-    actions.replaceChildren(done);
-    timer = setInterval(() => {
-      left -= 1;
-      status.textContent = `Look closely. ${left} second${left === 1 ? '' : 's'} left.`;
-      if (left <= 0) { clearInterval(timer); recall(); }
-    }, 1000);
-  }
-
-  function recall() {
-    const pool = shuffle([...game.shown, ...game.extra]);
-    const picked = new Set();
-    stage.innerHTML = `<div class="memory__grid memory__grid--pick">${pool.map((i) => tile(i, 'is-pickable')).join('')}</div>`;
-    status.textContent = `Pick the ${game.shown.length} you saw. 0 chosen.`;
-    $$('.memory__tile', stage).forEach((node) => {
-      node.addEventListener('click', () => {
-        if (node.classList.contains('is-marked')) return;
-        const text = node.dataset.text;
-        if (picked.has(text)) { picked.delete(text); node.classList.remove('is-picked'); }
-        else { picked.add(text); node.classList.add('is-picked'); }
-        status.textContent = `Pick the ${game.shown.length} you saw. ${picked.size} chosen.`;
-      });
-    });
-
-    const check = el('button', { className: 'btn btn--primary', type: 'button', textContent: 'Check my answer' });
-    check.addEventListener('click', () => {
-      const wanted = new Set(game.shown.map((i) => i.text));
-      let right = 0;
-      $$('.memory__tile', stage).forEach((node) => {
-        const was = wanted.has(node.dataset.text);
-        const chose = picked.has(node.dataset.text);
-        node.classList.add('is-marked');
-        if (was && chose) { node.classList.add('is-ok'); right += 1; }
-        else if (chose) node.classList.add('is-no');
-        else if (was) node.classList.add('is-missed');
-      });
-      status.textContent = `${right} of ${game.shown.length} remembered. Green was right, red was not, outlined ones you missed.`;
-      status.classList.add('is-done');
-      actions.replaceChildren(replayInner(game));
-    });
-    actions.replaceChildren(check);
-  }
-
-  study();
-  holder.append(stage, status, actions);
-  return holder;
-}
-
-/* --- cause and effect: put the chain back in order --- */
-function chainGame(game) {
-  const holder = el('div', { className: 'game' });
-  const stage = el('div', { className: 'chain' });
-  const status = el('p', { className: 'board__status' });
-  const actions = el('div', { className: 'runner__actions runner__actions--centre' });
-  let at = 0;
-  let scored = 0;
-
-  function draw() {
-    const chain = game.chains[at];
-    const chosen = [];
-    status.textContent = `Chain ${at + 1} of ${game.chains.length}`;
-    stage.innerHTML = `
-      <p class="chain__title">${chain.title}</p>
-      <ol class="chain__built"></ol>
-      <div class="chain__pool"></div>`;
-
-    const built = $('.chain__built', stage);
-    const pool = $('.chain__pool', stage);
-
-    shuffle(chain.steps).forEach((step) => {
-      const chip = el('button', { className: 'chain__step', type: 'button', textContent: step });
-      chip.addEventListener('click', () => {
-        if (chip.disabled) return;
-        chip.disabled = true;
-        chosen.push(step);
-        built.append(el('li', { className: 'chain__slot', textContent: step }));
-        if (chosen.length === chain.steps.length) check(chain, chosen, built);
-      });
-      pool.append(chip);
-    });
-    actions.replaceChildren();
-  }
-
-  function check(chain, chosen, built) {
-    let right = 0;
-    $$('.chain__slot', built).forEach((slot, i) => {
-      const ok = chosen[i] === chain.steps[i];
-      slot.classList.add(ok ? 'is-ok' : 'is-no');
-      if (ok) right += 1;
-    });
-    scored += right;
-    const last = at === game.chains.length - 1;
-    status.textContent = `${right} of ${chain.steps.length} in the right place.`;
-    const next = el('button', {
-      className: 'btn btn--primary',
-      type: 'button',
-      textContent: last ? 'Finish' : 'Next chain',
-    });
-    next.addEventListener('click', () => {
-      at += 1;
-      if (at < game.chains.length) { status.classList.remove('is-done'); draw(); }
-      else {
-        const total = game.chains.reduce((n, c) => n + c.steps.length, 0);
-        stage.replaceChildren(el('p', { className: 'stage__done', textContent: `${scored} of ${total} steps placed correctly.` }));
-        status.textContent = 'Every chain done.';
-        status.classList.add('is-done');
-        actions.replaceChildren(replayInner(game));
-      }
-    });
-    actions.replaceChildren(next);
-  }
-
-  draw();
-  holder.append(stage, status, actions);
-  return holder;
-}
-
-function replayInner(game) {
-  const again = el('button', { className: 'btn', type: 'button', textContent: 'Start over' });
-  again.addEventListener('click', () => { state.play = game; renderContent(); });
-  return again;
-}
-
-function replayButton(game) {
-  const row = el('div', { className: 'runner__actions runner__actions--centre' });
-  const again = el('button', { className: 'btn', type: 'button', textContent: 'Start over' });
-  again.addEventListener('click', () => { state.play = game; renderContent(); });
-  row.append(again);
-  return row;
-}
-
 /* ---------------------------------------------------------------
    Test runner
    --------------------------------------------------------------- */
@@ -761,12 +915,6 @@ function startTest(test) {
   focusTab('tests');
   renderTab();
   $('#main').scrollIntoView({ block: 'start' });
-}
-
-/** Started from the home page, an activity still belongs to its own tab. */
-function focusTab(tab) {
-  state.tab = tab;
-  if (location.hash !== `#/${tab}`) location.hash = `#/${tab}`;
 }
 
 function exitTest() {
