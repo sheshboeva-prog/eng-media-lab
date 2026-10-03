@@ -17,19 +17,19 @@ export const videos = [
     id: 'fKnAJCSGSdk',
     title: 'Urbanization and the Future of Cities',
     desc: 'How cities grew from small settlements into megacities, and where they go next.',
-    topic: 'Cities', channel: 'TED-Ed', duration: '4:08',
+    topic: 'Environment', channel: 'TED-Ed', duration: '4:08',
   },
   {
     id: '-T__YWoq45I',
     title: 'Is AI the Most Important Technology of the Century?',
     desc: 'The promise and the risk of artificial intelligence, explained in five minutes.',
-    topic: 'Technology', channel: 'TED-Ed', duration: '5:20',
+    topic: 'Media', channel: 'TED-Ed', duration: '5:20',
   },
   {
     id: 'W4CHY-Pp3g4',
     title: 'Social Media Addiction and How to Break It',
     desc: 'Why the feed is so hard to put down, and what actually helps.',
-    topic: 'Wellbeing', channel: 'Dr Christian Heim', duration: '13:15',
+    topic: 'Health', channel: 'Dr Christian Heim', duration: '13:15',
   },
   {
     id: 'Cg_GW7yhq20',
@@ -41,7 +41,7 @@ export const videos = [
     id: 'eCtKZJ9h2eo',
     title: 'Culture Shock: An English Conversation',
     desc: 'Everyday expressions for talking about living in an unfamiliar country.',
-    topic: 'Culture', channel: 'Learn English Hamza Classroom', duration: '5:28',
+    topic: 'Travel', channel: 'Learn English Hamza Classroom', duration: '5:28',
   },
   {
     id: 'tdgWEEOgdrU',
@@ -53,19 +53,19 @@ export const videos = [
     id: 'zhpcgpqWc1Q',
     title: 'How to Choose the Right Career Path',
     desc: 'Seven practical steps for deciding what kind of work suits you.',
-    topic: 'Career', channel: 'CareerAddict', duration: '4:06',
+    topic: 'Work', channel: 'CareerAddict', duration: '4:06',
   },
   {
     id: 'U20vo-PA3-k',
     title: 'What Is Globalization?',
     desc: 'A ninety-second explainer on how trade ties national economies together.',
-    topic: 'Economy', channel: 'HBS Online', duration: '1:37',
+    topic: 'Work', channel: 'HBS Online', duration: '1:37',
   },
   {
     id: 'JJyLynh5d6M',
     title: 'How to Actually Start Your Own Business',
     desc: 'A plain-spoken walkthrough of the first steps of building a business.',
-    topic: 'Business', channel: 'Rise Above Reality', duration: '11:01',
+    topic: 'Work', channel: 'Rise Above Reality', duration: '11:01',
   },
 ];
 
@@ -136,7 +136,7 @@ export const tests = [
   {
     "id": "urbanisation",
     "title": "Urbanisation",
-    "topic": "Cities",
+    "topic": "Environment",
     "desc": "Why cities grow and what that growth costs.",
     "questions": [
       {
@@ -194,7 +194,7 @@ export const tests = [
   {
     "id": "artificial-intelligence",
     "title": "Artificial Intelligence",
-    "topic": "Technology",
+    "topic": "Media",
     "desc": "What AI is, where it helps and where to be careful.",
     "questions": [
       {
@@ -252,7 +252,7 @@ export const tests = [
   {
     "id": "social-media",
     "title": "Social Media",
-    "topic": "Wellbeing",
+    "topic": "Health",
     "desc": "Sharing, misinformation and screen time.",
     "questions": [
       {
@@ -368,7 +368,7 @@ export const tests = [
   {
     "id": "culture-shock",
     "title": "Culture Shock",
-    "topic": "Culture",
+    "topic": "Travel",
     "desc": "Adapting to unfamiliar customs and social rules.",
     "questions": [
       {
@@ -484,7 +484,7 @@ export const tests = [
   {
     "id": "career",
     "title": "Career",
-    "topic": "Career",
+    "topic": "Work",
     "desc": "Skills, lifelong learning and what a CV shows.",
     "questions": [
       {
@@ -542,7 +542,7 @@ export const tests = [
   {
     "id": "globalization",
     "title": "Globalization",
-    "topic": "Economy",
+    "topic": "Work",
     "desc": "How countries and economies connect, and the pressure it creates.",
     "questions": [
       {
@@ -600,7 +600,7 @@ export const tests = [
   {
     "id": "business",
     "title": "Business",
-    "topic": "Business",
+    "topic": "Work",
     "desc": "Customers, marketing, profit and demand.",
     "questions": [
       {
@@ -891,7 +891,7 @@ export const games = [
     "id": "predict-next",
     "title": "Predict the Next",
     "type": "Prediction",
-    "topic": "Thinking",
+    "topic": "Media",
     "cover": "ink",
     "kind": "predict",
     "cognitive": "Prediction, inference",
@@ -1015,7 +1015,7 @@ export const games = [
     "id": "business-match",
     "title": "Business",
     "type": "Match up",
-    "topic": "Business",
+    "topic": "Work",
     "cover": "ink",
     "kind": "match",
     "intro": "Pair each business word with what it means.",
@@ -1069,7 +1069,7 @@ export const games = [
     "id": "social-sort",
     "title": "Social Media",
     "type": "Group sort",
-    "topic": "Wellbeing",
+    "topic": "Health",
     "cover": "ink",
     "kind": "sort",
     "intro": "Decide where each one belongs.",
@@ -1143,7 +1143,7 @@ export const games = [
     "id": "memory-challenge",
     "title": "Memory Challenge",
     "type": "Memory",
-    "topic": "Thinking",
+    "topic": "Media",
     "cover": "sun",
     "kind": "memory",
     "cognitive": "Attention, working memory",
@@ -1336,7 +1336,7 @@ export const games = [
     "id": "cities-cards",
     "title": "City Life",
     "type": "Speaking cards",
-    "topic": "Cities",
+    "topic": "Environment",
     "cover": "dusk",
     "kind": "cards",
     "intro": "Take a card and answer it in two or three sentences.",
@@ -1358,7 +1358,7 @@ export const games = [
     "id": "cause-effect",
     "title": "Cause and Effect",
     "type": "Order the chain",
-    "topic": "Thinking",
+    "topic": "Media",
     "cover": "sun",
     "kind": "chain",
     "cognitive": "Causal reasoning, logic",
@@ -1417,7 +1417,7 @@ export const games = [
     "id": "word-concept",
     "title": "Word and Concept",
     "type": "Match up",
-    "topic": "Cities",
+    "topic": "Environment",
     "cover": "ink",
     "kind": "match",
     "cognitive": "Semantic memory, association",

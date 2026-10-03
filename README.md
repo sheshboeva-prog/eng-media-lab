@@ -88,7 +88,9 @@ and cropped to 480x360. They need no credit line. `build.py --inline-images` emb
 them in the single-file build alongside the video thumbnails.
 
 The filter chips are built from the `topic` values in the active tab, so adding an
-entry with a new topic adds its chip automatically. There are no CEFR levels.
+entry with a new topic adds its chip automatically. There are five topics in use —
+Environment, Health, Media, Travel, Work — and every tab shares them, which keeps
+the row of chips to one line. There are no CEFR levels.
 
 Bump the `?v=` on the stylesheet and script links in `index.html` whenever either
 changes, and the one on the `data.js` import at the top of `app.js` with them, since

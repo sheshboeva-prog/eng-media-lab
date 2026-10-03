@@ -1,4 +1,4 @@
-import { videos, tests, games, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt } from './data.js?v=11';
+import { videos, tests, games, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt } from './data.js?v=12';
 
 /* ---------------------------------------------------------------
    State
