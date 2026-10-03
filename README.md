@@ -74,8 +74,14 @@ Games are done: six activities built into the site, nothing embedded and nothing
 fetched. `kind` picks the engine — `match` (pair a word with its meaning, or with a
 photograph when `pictures` is true), `sort` (drop each card into its group, with or
 without photographs), `wheel` (spin for a speaking prompt, drawn on a canvas) and
-`cards` (a shuffled deck of prompts) and `spot` (find five changes between two
-photographs).
+`cards` (a shuffled deck of prompts), `spot` (find five changes between two
+pictures) and `watch` (play a lesson in the page, then answer on it).
+
+The questions in Watch and Answer come from what each publisher states in the
+video's own description, which is all that can be checked without a transcript.
+YouTube no longer serves captions to anything but its own player, so anything
+beyond that has to be written by someone who has watched the lesson through — add
+them to the `questions` list beside each video in `data.js`.
 
 The spot-the-difference scenes were made here: a public-domain photograph, and a
 copy of it with five patches altered — hue turned, mirrored, zoomed, darkened,

@@ -1,4 +1,4 @@
-import { videos, tests, games, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt } from './data.js?v=12';
+import { videos, tests, games, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt } from './data.js?v=13';
 
 /* ---------------------------------------------------------------
    State
@@ -257,7 +257,7 @@ function renderHome() {
    --------------------------------------------------------------- */
 const LEVELS = ['easy', 'standard', 'hard'];
 const LEVEL_LABEL = { easy: 'Easy', standard: 'Standard', hard: 'Hard' };
-const LEVELLED = new Set(['match', 'sort', 'predict', 'chain', 'memory', 'spot']);
+const LEVELLED = new Set(['match', 'sort', 'predict', 'chain', 'memory', 'spot', 'watch']);
 
 /** How much of a game's material each level uses. */
 const SIZES = {
@@ -267,6 +267,7 @@ const SIZES = {
   chain:   { easy: 2, standard: 3, hard: 99 },
   memory:  { easy: 4, standard: 6, hard: 8 },
   spot:    { easy: 1, standard: 2, hard: 3 },
+  watch:   { easy: 1, standard: 2, hard: 4 },
 };
 const STUDY_SECONDS = { easy: 16, standard: 13, hard: 10 };
 
@@ -355,7 +356,7 @@ function renderPlayer() {
   const game = state.play;
   const engines = {
     match: matchGame, sort: sortGame, wheel: wheelGame, cards: cardsGame,
-    predict: predictGame, memory: memoryGame, chain: chainGame, spot: spotGame,
+    predict: predictGame, memory: memoryGame, chain: chainGame, spot: spotGame, watch: watchGame,
   };
   return playerShell(game, engines[game.kind](game));
 }
@@ -785,6 +786,86 @@ function chainGame(game) {
 
   draw();
   holder.append(stage, status, actions);
+  return holder;
+}
+
+/* --- watch and answer: the lesson plays here, the questions follow --- */
+function watchGame(game) {
+  const holder = el('div', { className: 'game' });
+  const lessons = portion(game.items, 'watch');
+  const stage = el('div', { className: 'watch' });
+  const status = el('p', { className: 'board__status' });
+  const started = clock();
+  const review = [];
+  let at = 0;
+  let question = 0;
+  let right = 0;
+  const total = lessons.reduce((n, l) => n + l.questions.length, 0);
+
+  function player() {
+    const lesson = lessons[at];
+    const frame = el('div', { className: 'watch__head' });
+    frame.innerHTML = `
+      <p class="watch__title">${lesson.title}<span>${lesson.by}</span></p>
+      <div class="watch__screen">
+        <iframe src="https://www.youtube-nocookie.com/embed/${lesson.video}?rel=0&modestbranding=1"
+                title="${lesson.title}" allow="accelerometer; encrypted-media; picture-in-picture"
+                allowfullscreen loading="lazy"></iframe>
+      </div>`;
+    return frame;
+  }
+
+  function ask() {
+    const lesson = lessons[at];
+    const item = lesson.questions[question];
+    status.textContent = `Lesson ${at + 1} of ${lessons.length} · question ${question + 1} of ${lesson.questions.length}`;
+
+    const box = el('div', { className: 'watch__ask' });
+    box.innerHTML = `<p class="watch__q">${item.q}</p><div class="predict__options"></div>`;
+    const list = $('.predict__options', box);
+    item.options.forEach((text, i) => {
+      const btn = el('button', { className: 'opt', type: 'button' });
+      btn.innerHTML = `<span class="opt__letter">${LETTERS[i]}</span><span class="opt__text">${text}</span>`;
+      btn.addEventListener('click', () => answer(box, item, i));
+      list.append(btn);
+    });
+    stage.replaceChildren(player(), box);
+  }
+
+  function answer(box, item, choice) {
+    const ok = choice === item.answer;
+    if (ok) right += 1;
+    else {
+      review.push({
+        ok: false, q: item.q,
+        your: item.options[choice], right: item.options[item.answer], why: item.why,
+      });
+    }
+    $$('.opt', box).forEach((b, i) => {
+      b.disabled = true;
+      if (i === item.answer) b.classList.add('is-right');
+      else if (i === choice) b.classList.add('is-wrong');
+    });
+    const note = el('div', { className: `predict__why ${ok ? 'is-ok' : 'is-no'}` });
+    note.innerHTML = `<strong>${ok ? 'That is right.' : 'Not that one.'}</strong> ${item.why}`;
+
+    const lesson = lessons[at];
+    const lastQuestion = question === lesson.questions.length - 1;
+    const lastLesson = at === lessons.length - 1;
+    const next = el('button', {
+      className: 'btn btn--primary', type: 'button',
+      textContent: !lastQuestion ? 'Next question' : lastLesson ? 'See how you did' : 'Next lesson',
+    });
+    next.addEventListener('click', () => {
+      if (!lastQuestion) { question += 1; ask(); return; }
+      if (!lastLesson) { at += 1; question = 0; ask(); return; }
+      finish(holder, gameResult(game, { correct: right, total, seconds: secondsSince(started), review }));
+    });
+    box.append(note, el('div', { className: 'runner__actions' }, [next]));
+  }
+
+  ask();
+  holder.append(stage, status);
   return holder;
 }
 

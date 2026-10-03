@@ -2,6 +2,9 @@
  * Site content.
  * Videos are YouTube lessons; the card links straight to the watch page.
  * Tests run in the page and are scored locally.
+ * The questions in Watch and Answer come from what each publisher states in the
+ * video's own description. Add more after watching a lesson through.
+ *
  * Games run on the engines in app.js: `kind` picks the engine, and the rest of the
  * fields are that engine's content. Photographs are public domain.
  */
@@ -882,6 +885,180 @@ export const games = [
             "y": 55.5,
             "rx": 7.9,
             "ry": 16.9
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "watch-answer",
+    "title": "Watch and Answer",
+    "type": "Watch and answer",
+    "topic": "Media",
+    "cover": "ink",
+    "kind": "watch",
+    "cognitive": "Listening comprehension, recall",
+    "language": "Listening",
+    "media": "Video",
+    "intro": "Watch the lesson, then answer what it told you. Play it as many times as you need.",
+    "items": [
+      {
+        "video": "zarll9bx6FI",
+        "title": "What Happens If a City Loses All Its Trees?",
+        "by": "TED-Ed",
+        "questions": [
+          {
+            "q": "By 2050, what share of the world is expected to be living in cities?",
+            "options": [
+              "About a quarter",
+              "About half",
+              "Over 65 per cent",
+              "Almost everyone"
+            ],
+            "answer": 2,
+            "why": "The lesson opens with the estimate that over 65 per cent of the world will live in cities by 2050."
+          },
+          {
+            "q": "How long have people been discovering what trees do for cities?",
+            "options": [
+              "Only since the last century",
+              "Since the first cities, thousands of years ago",
+              "Since the Industrial Revolution",
+              "Only since 2050 was modelled"
+            ],
+            "answer": 1,
+            "why": "The lesson traces these benefits back to the creation of the first cities thousands of years ago."
+          },
+          {
+            "q": "What does the lesson say trees are to a successful city?",
+            "options": [
+              "A decoration added recently",
+              "An essential part of it",
+              "A problem for building",
+              "A modern idea from Europe"
+            ],
+            "answer": 1,
+            "why": "Its argument is that trees have always been an essential part of successful cities."
+          }
+        ]
+      },
+      {
+        "video": "fKnAJCSGSdk",
+        "title": "Urbanization and the Future of Cities",
+        "by": "TED-Ed",
+        "questions": [
+          {
+            "q": "About how long ago did hunter-gatherers settle into semi-permanent villages?",
+            "options": [
+              "About 1,000 years ago",
+              "About 10,000 years ago",
+              "About 100,000 years ago",
+              "About 500 years ago"
+            ],
+            "answer": 1,
+            "why": "The lesson begins about 10,000 years ago, when rudimentary agriculture let people stay in one place."
+          },
+          {
+            "q": "What made that move possible?",
+            "options": [
+              "Rudimentary agriculture",
+              "The wheel",
+              "Written language",
+              "Metal tools"
+            ],
+            "answer": 0,
+            "why": "Early farming is what allowed semi-permanent villages, and people never looked back."
+          },
+          {
+            "q": "What followed the food surpluses those villages produced?",
+            "options": [
+              "A return to hunting",
+              "Commerce and specialisation",
+              "A fall in population",
+              "The end of villages"
+            ],
+            "answer": 1,
+            "why": "Surpluses led to commerce and specialisation, and much later, with the Industrial Revolution, the modern city."
+          }
+        ]
+      },
+      {
+        "video": "-T__YWoq45I",
+        "title": "Is AI the Most Important Technology of the Century?",
+        "by": "TED-Ed",
+        "questions": [
+          {
+            "q": "What question does this lesson set out to answer?",
+            "options": [
+              "Whether this century is the most important in human history",
+              "Whether computers can feel",
+              "When the first city was built",
+              "Which country builds the most machines"
+            ],
+            "answer": 0,
+            "why": "The lesson asks whether the 21st century is the most pivotal time in human history."
+          },
+          {
+            "q": "Alongside rapid growth, what does it say new technologies could bring?",
+            "options": [
+              "Cheaper food only",
+              "Unprecedented levels of existential risk",
+              "An end to all work",
+              "Slower scientific progress"
+            ],
+            "answer": 1,
+            "why": "It argues the same technologies could entirely change how people live and raise existential risk to unprecedented levels."
+          },
+          {
+            "q": "Whose decisions does the lesson say will shape humanity's future?",
+            "options": [
+              "Only governments",
+              "Only scientists",
+              "Nobody's, it is already fixed",
+              "The decisions we make now"
+            ],
+            "answer": 3,
+            "why": "Its closing argument is that the decisions made now may have a major impact on humanity's future."
+          }
+        ]
+      },
+      {
+        "video": "U20vo-PA3-k",
+        "title": "What Is Globalization?",
+        "by": "HBS Online",
+        "questions": [
+          {
+            "q": "What does this short lesson give an overview of?",
+            "options": [
+              "The pros and cons of globalization for business",
+              "How to start a company",
+              "The history of banking",
+              "How to write a business plan"
+            ],
+            "answer": 0,
+            "why": "It is an overview of the effects globalization has had on business, good and bad."
+          },
+          {
+            "q": "Who publishes it?",
+            "options": [
+              "A national newspaper",
+              "Harvard Business School Online",
+              "A travel channel",
+              "A government department"
+            ],
+            "answer": 1,
+            "why": "The lesson comes from HBS Online, the online arm of Harvard Business School."
+          },
+          {
+            "q": "What kind of effects does it say globalization has had on business?",
+            "options": [
+              "Only good ones",
+              "Only bad ones",
+              "Numerous effects, with pros and cons",
+              "None worth measuring"
+            ],
+            "answer": 2,
+            "why": "It states that globalization has had numerous effects, and sets out both sides."
           }
         ]
       }
