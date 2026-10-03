@@ -1,4 +1,4 @@
-import { videos, tests, games, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt } from './data.js?v=9';
+import { videos, tests, games, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt } from './data.js?v=10';
 
 /* ---------------------------------------------------------------
    State
@@ -796,7 +796,6 @@ function spotGame(game) {
   const status = el('p', { className: 'board__status' });
   const actions = el('div', { className: 'runner__actions runner__actions--centre' });
   const started = clock();
-  const perScene = scenes[0].spots.length;
   let at = 0;
   let found = 0;
   let missedClicks = 0;
@@ -896,7 +895,7 @@ function spotGame(game) {
           if (revealed) notes.push(`${revealed} shown to you`);
           finish(holder, gameResult(game, {
             correct: found,
-            total: scenes.length * perScene,
+            total: scenes.reduce((n, sc) => n + sc.spots.length, 0),
             seconds: secondsSince(started),
             extra: notes.join(' and '),
           }));

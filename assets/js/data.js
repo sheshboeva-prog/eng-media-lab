@@ -772,153 +772,110 @@ export const games = [
     "cognitive": "Attention, visual comparison",
     "language": "Vocabulary",
     "media": "Photographs",
-    "intro": "Five things are in one photograph but not the other. Click each one you find, in either picture.",
+    "intro": "Things are missing from one photograph, and others have turned up. Click every change you find, in either picture.",
     "scenes": [
-      {
-        "title": "A balloon festival",
-        "a": "assets/img/diff-balloon-a.jpg",
-        "b": "assets/img/diff-balloon-b.jpg",
-        "spots": [
-          {
-            "x": 30.8,
-            "y": 42.7,
-            "rx": 6.4,
-            "ry": 10.2
-          },
-          {
-            "x": 89.4,
-            "y": 43.3,
-            "rx": 7.5,
-            "ry": 13.3
-          },
-          {
-            "x": 51.4,
-            "y": 73.8,
-            "rx": 5.5,
-            "ry": 8.8
-          },
-          {
-            "x": 68.9,
-            "y": 59.0,
-            "rx": 6.4,
-            "ry": 10.2
-          },
-          {
-            "x": 20.8,
-            "y": 30.4,
-            "rx": 5.5,
-            "ry": 8.8
-          }
-        ]
-      },
       {
         "title": "Flamingos in flight",
         "a": "assets/img/diff-birds-a.jpg",
         "b": "assets/img/diff-birds-b.jpg",
         "spots": [
           {
-            "x": 39.1,
-            "y": 45.0,
-            "rx": 10.9,
-            "ry": 9.6
+            "x": 39.0,
+            "y": 43.1,
+            "rx": 10.4,
+            "ry": 8.5
           },
           {
-            "x": 87.2,
-            "y": 41.7,
-            "rx": 9.7,
-            "ry": 8.8
+            "x": 73.3,
+            "y": 46.9,
+            "rx": 27.3,
+            "ry": 11.0
           },
           {
-            "x": 72.0,
-            "y": 45.4,
-            "rx": 9.5,
-            "ry": 8.8
+            "x": 60.9,
+            "y": 34.6,
+            "rx": 10.7,
+            "ry": 9.4
           },
           {
-            "x": 25.6,
-            "y": 35.0,
-            "rx": 9.4,
-            "ry": 10.0
+            "x": 96.1,
+            "y": 38.0,
+            "rx": 3.8,
+            "ry": 5.0
           },
           {
-            "x": 11.6,
-            "y": 48.1,
-            "rx": 9.4,
-            "ry": 7.7
+            "x": 95.6,
+            "y": 32.8,
+            "rx": 3.8,
+            "ry": 5.0
           }
         ]
       },
       {
-        "title": "Parasols on the beach",
+        "title": "Pennants on the beach",
         "a": "assets/img/diff-beach-a.jpg",
         "b": "assets/img/diff-beach-b.jpg",
         "spots": [
           {
-            "x": 56.6,
-            "y": 21.2,
-            "rx": 5.0,
-            "ry": 7.5
+            "x": 60.6,
+            "y": 21.4,
+            "rx": 7.8,
+            "ry": 7.8
           },
           {
-            "x": 78.8,
-            "y": 21.2,
-            "rx": 5.0,
-            "ry": 7.5
+            "x": 77.8,
+            "y": 24.3,
+            "rx": 3.8,
+            "ry": 5.0
           },
           {
-            "x": 96.6,
-            "y": 21.7,
-            "rx": 5.0,
-            "ry": 7.5
+            "x": 95.8,
+            "y": 22.9,
+            "rx": 3.8,
+            "ry": 5.8
           },
           {
-            "x": 41.9,
-            "y": 21.2,
-            "rx": 5.0,
-            "ry": 7.5
+            "x": 47.2,
+            "y": 19.7,
+            "rx": 3.8,
+            "ry": 5.9
           },
           {
-            "x": 35.6,
-            "y": 21.7,
-            "rx": 5.0,
-            "ry": 7.5
+            "x": 53.8,
+            "y": 19.7,
+            "rx": 3.8,
+            "ry": 5.9
           }
         ]
       },
       {
-        "title": "A harbour town",
-        "a": "assets/img/diff-harbour-a.jpg",
-        "b": "assets/img/diff-harbour-b.jpg",
+        "title": "Gulls over the bay",
+        "a": "assets/img/diff-gulls-a.jpg",
+        "b": "assets/img/diff-gulls-b.jpg",
         "spots": [
           {
-            "x": 71.2,
-            "y": 50.8,
-            "rx": 5.6,
-            "ry": 5.8
+            "x": 27.3,
+            "y": 31.1,
+            "rx": 7.0,
+            "ry": 17.8
           },
           {
-            "x": 19.8,
-            "y": 53.5,
-            "rx": 4.5,
-            "ry": 5.4
-          },
-          {
-            "x": 34.2,
-            "y": 45.4,
-            "rx": 5.5,
+            "x": 49.1,
+            "y": 88.1,
+            "rx": 13.4,
             "ry": 7.9
           },
           {
-            "x": 57.2,
-            "y": 46.7,
-            "rx": 4.4,
-            "ry": 5.8
+            "x": 57.1,
+            "y": 48.8,
+            "rx": 28.0,
+            "ry": 22.5
           },
           {
-            "x": 28.9,
-            "y": 50.2,
-            "rx": 7.7,
-            "ry": 6.5
+            "x": 38.8,
+            "y": 74.4,
+            "rx": 28.5,
+            "ry": 23.1
           }
         ]
       }
