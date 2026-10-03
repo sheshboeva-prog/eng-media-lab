@@ -74,7 +74,14 @@ Games are done: six activities built into the site, nothing embedded and nothing
 fetched. `kind` picks the engine — `match` (pair a word with its meaning, or with a
 photograph when `pictures` is true), `sort` (drop each card into its group, with or
 without photographs), `wheel` (spin for a speaking prompt, drawn on a canvas) and
-`cards` (a shuffled deck of prompts).
+`cards` (a shuffled deck of prompts) and `spot` (find five changes between two
+photographs).
+
+The spot-the-difference scenes were made here: a public-domain photograph, and a
+copy of it with five patches altered — hue turned, mirrored, zoomed, darkened,
+lightened — each centred on a part of the picture with enough detail for the change
+to be fair. The patch centres are stored as percentages, so the hit test works at
+any size.
 
 The fifteen photographs in `assets/img/` are public domain, found through Openverse
 and cropped to 480x360. They need no credit line. `build.py --inline-images` embeds

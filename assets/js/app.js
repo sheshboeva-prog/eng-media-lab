@@ -257,7 +257,7 @@ function renderHome() {
    --------------------------------------------------------------- */
 const LEVELS = ['easy', 'standard', 'hard'];
 const LEVEL_LABEL = { easy: 'Easy', standard: 'Standard', hard: 'Hard' };
-const LEVELLED = new Set(['match', 'sort', 'predict', 'chain', 'memory']);
+const LEVELLED = new Set(['match', 'sort', 'predict', 'chain', 'memory', 'spot']);
 
 /** How much of a game's material each level uses. */
 const SIZES = {
@@ -266,6 +266,7 @@ const SIZES = {
   predict: { easy: 4, standard: 6, hard: 99 },
   chain:   { easy: 2, standard: 3, hard: 99 },
   memory:  { easy: 4, standard: 6, hard: 8 },
+  spot:    { easy: 1, standard: 2, hard: 3 },
 };
 const STUDY_SECONDS = { easy: 16, standard: 13, hard: 10 };
 
@@ -354,7 +355,7 @@ function renderPlayer() {
   const game = state.play;
   const engines = {
     match: matchGame, sort: sortGame, wheel: wheelGame, cards: cardsGame,
-    predict: predictGame, memory: memoryGame, chain: chainGame,
+    predict: predictGame, memory: memoryGame, chain: chainGame, spot: spotGame,
   };
   return playerShell(game, engines[game.kind](game));
 }
@@ -780,6 +781,128 @@ function chainGame(game) {
       }
     });
     actions.replaceChildren(next);
+  }
+
+  draw();
+  holder.append(stage, status, actions);
+  return holder;
+}
+
+/* --- spot the difference: two photographs, five changes --- */
+function spotGame(game) {
+  const holder = el('div', { className: 'game' });
+  const scenes = portion(game.scenes, 'spot');
+  const stage = el('div', { className: 'spot' });
+  const status = el('p', { className: 'board__status' });
+  const actions = el('div', { className: 'runner__actions runner__actions--centre' });
+  const started = clock();
+  const perScene = scenes[0].spots.length;
+  let at = 0;
+  let found = 0;
+  let missedClicks = 0;
+  let revealed = 0;
+  let ticker = null;
+
+  // the hotspots are in per cent, so the tolerance is an ellipse of the same shape
+  const NEAR_X = 8.6;
+  const NEAR_Y = 11.4;
+
+  function draw() {
+    const scene = scenes[at];
+    const resolved = new Set();
+    stage.innerHTML = `
+      <p class="spot__title">${scene.title}</p>
+      <div class="spot__pair">
+        <figure class="spot__pane"><img src="${scene.a}" alt="The first photograph" /><figcaption>Before</figcaption></figure>
+        <figure class="spot__pane"><img src="${scene.b}" alt="The second photograph" /><figcaption>After</figcaption></figure>
+      </div>`;
+
+    const panes = $$('.spot__pane', stage);
+    const tell = () => {
+      status.textContent = `Scene ${at + 1} of ${scenes.length} · ${resolved.size} of ${scene.spots.length} found`;
+    };
+    tell();
+
+    const mark = (index, how) => {
+      panes.forEach((pane) => {
+        const dot = el('span', { className: `spot__mark ${how}` });
+        dot.style.left = `${scene.spots[index].x}%`;
+        dot.style.top = `${scene.spots[index].y}%`;
+        pane.append(dot);
+      });
+    };
+
+    panes.forEach((pane) => {
+      pane.addEventListener('click', (event) => {
+        const img = $('img', pane);
+        const box = img.getBoundingClientRect();
+        const x = ((event.clientX - box.left) / box.width) * 100;
+        const y = ((event.clientY - box.top) / box.height) * 100;
+
+        let hit = -1;
+        let closest = Infinity;
+        scene.spots.forEach((spot, i) => {
+          if (resolved.has(i)) return;
+          const d = ((x - spot.x) / NEAR_X) ** 2 + ((y - spot.y) / NEAR_Y) ** 2;
+          if (d <= 1 && d < closest) { closest = d; hit = i; }
+        });
+
+        if (hit === -1) {
+          missedClicks += 1;
+          const miss = el('span', { className: 'spot__miss' });
+          miss.style.left = `${x}%`;
+          miss.style.top = `${y}%`;
+          pane.append(miss);
+          setTimeout(() => miss.remove(), 600);
+          return;
+        }
+
+        resolved.add(hit);
+        found += 1;
+        mark(hit, 'is-found');
+        tell();
+        if (resolved.size === scene.spots.length) done();
+      });
+    });
+
+    const reveal = el('button', { className: 'btn', type: 'button', textContent: 'Show me one' });
+    reveal.addEventListener('click', () => {
+      const left = scene.spots.map((_, i) => i).filter((i) => !resolved.has(i));
+      if (!left.length) return;
+      const pick = left[Math.floor(Math.random() * left.length)];
+      resolved.add(pick);
+      revealed += 1;
+      mark(pick, 'is-shown');
+      tell();
+      if (resolved.size === scene.spots.length) done();
+    });
+    actions.replaceChildren(reveal);
+
+    function done() {
+      const last = at === scenes.length - 1;
+      const next = el('button', {
+        className: 'btn btn--primary',
+        type: 'button',
+        textContent: last ? 'See how you did' : 'Next scene',
+      });
+      next.addEventListener('click', () => {
+        at += 1;
+        if (at < scenes.length) draw();
+        else {
+          clearInterval(ticker);
+          const notes = [];
+          if (missedClicks) notes.push(spell(missedClicks, 'wrong click'));
+          if (revealed) notes.push(`${revealed} shown to you`);
+          finish(holder, gameResult(game, {
+            correct: found,
+            total: scenes.length * perScene,
+            seconds: secondsSince(started),
+            extra: notes.join(' and '),
+          }));
+        }
+      });
+      actions.replaceChildren(next);
+    }
   }
 
   draw();

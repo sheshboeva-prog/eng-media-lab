@@ -763,6 +763,101 @@ export const games = [
     "media": "Photographs"
   },
   {
+    "id": "spot-difference",
+    "title": "Spot the Difference",
+    "type": "Find the difference",
+    "topic": "Media",
+    "cover": "ink",
+    "kind": "spot",
+    "cognitive": "Attention, visual comparison",
+    "language": "Vocabulary",
+    "media": "Photographs",
+    "intro": "Five things changed in the second photograph. Click each one you find, in either picture.",
+    "scenes": [
+      {
+        "title": "A city square",
+        "a": "assets/img/diff-square0-a.jpg",
+        "b": "assets/img/diff-square0-b.jpg",
+        "spots": [
+          {
+            "x": 21.4,
+            "y": 50.0
+          },
+          {
+            "x": 50.0,
+            "y": 50.0
+          },
+          {
+            "x": 35.6,
+            "y": 30.0
+          },
+          {
+            "x": 64.2,
+            "y": 30.0
+          },
+          {
+            "x": 35.6,
+            "y": 70.0
+          }
+        ]
+      },
+      {
+        "title": "An old high street",
+        "a": "assets/img/diff-square1-a.jpg",
+        "b": "assets/img/diff-square1-b.jpg",
+        "spots": [
+          {
+            "x": 78.4,
+            "y": 70.0
+          },
+          {
+            "x": 64.2,
+            "y": 30.0
+          },
+          {
+            "x": 35.6,
+            "y": 30.0
+          },
+          {
+            "x": 21.4,
+            "y": 50.0
+          },
+          {
+            "x": 50.0,
+            "y": 70.0
+          }
+        ]
+      },
+      {
+        "title": "A market street",
+        "a": "assets/img/diff-street2-a.jpg",
+        "b": "assets/img/diff-street2-b.jpg",
+        "spots": [
+          {
+            "x": 35.6,
+            "y": 30.0
+          },
+          {
+            "x": 50.0,
+            "y": 50.0
+          },
+          {
+            "x": 78.4,
+            "y": 70.0
+          },
+          {
+            "x": 35.6,
+            "y": 70.0
+          },
+          {
+            "x": 21.4,
+            "y": 50.0
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "predict-next",
     "title": "Predict the Next",
     "type": "Prediction",
