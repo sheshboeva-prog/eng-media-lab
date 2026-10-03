@@ -772,86 +772,153 @@ export const games = [
     "cognitive": "Attention, visual comparison",
     "language": "Vocabulary",
     "media": "Photographs",
-    "intro": "Five things changed in the second photograph. Click each one you find, in either picture.",
+    "intro": "Five things are in one photograph but not the other. Click each one you find, in either picture.",
     "scenes": [
       {
-        "title": "A city square",
-        "a": "assets/img/diff-square0-a.jpg",
-        "b": "assets/img/diff-square0-b.jpg",
+        "title": "A balloon festival",
+        "a": "assets/img/diff-balloon-a.jpg",
+        "b": "assets/img/diff-balloon-b.jpg",
         "spots": [
           {
-            "x": 21.4,
-            "y": 50.0
+            "x": 30.8,
+            "y": 42.7,
+            "rx": 6.4,
+            "ry": 10.2
           },
           {
-            "x": 50.0,
-            "y": 50.0
+            "x": 89.4,
+            "y": 43.3,
+            "rx": 7.5,
+            "ry": 13.3
           },
           {
-            "x": 35.6,
-            "y": 30.0
+            "x": 51.4,
+            "y": 73.8,
+            "rx": 5.5,
+            "ry": 8.8
           },
           {
-            "x": 64.2,
-            "y": 30.0
+            "x": 68.9,
+            "y": 59.0,
+            "rx": 6.4,
+            "ry": 10.2
           },
           {
-            "x": 35.6,
-            "y": 70.0
+            "x": 20.8,
+            "y": 30.4,
+            "rx": 5.5,
+            "ry": 8.8
           }
         ]
       },
       {
-        "title": "An old high street",
-        "a": "assets/img/diff-square1-a.jpg",
-        "b": "assets/img/diff-square1-b.jpg",
+        "title": "Flamingos in flight",
+        "a": "assets/img/diff-birds-a.jpg",
+        "b": "assets/img/diff-birds-b.jpg",
         "spots": [
           {
-            "x": 78.4,
-            "y": 70.0
+            "x": 39.1,
+            "y": 45.0,
+            "rx": 10.9,
+            "ry": 9.6
           },
           {
-            "x": 64.2,
-            "y": 30.0
+            "x": 87.2,
+            "y": 41.7,
+            "rx": 9.7,
+            "ry": 8.8
           },
           {
-            "x": 35.6,
-            "y": 30.0
+            "x": 72.0,
+            "y": 45.4,
+            "rx": 9.5,
+            "ry": 8.8
           },
           {
-            "x": 21.4,
-            "y": 50.0
+            "x": 25.6,
+            "y": 35.0,
+            "rx": 9.4,
+            "ry": 10.0
           },
           {
-            "x": 50.0,
-            "y": 70.0
+            "x": 11.6,
+            "y": 48.1,
+            "rx": 9.4,
+            "ry": 7.7
           }
         ]
       },
       {
-        "title": "A market street",
-        "a": "assets/img/diff-street2-a.jpg",
-        "b": "assets/img/diff-street2-b.jpg",
+        "title": "Parasols on the beach",
+        "a": "assets/img/diff-beach-a.jpg",
+        "b": "assets/img/diff-beach-b.jpg",
         "spots": [
           {
+            "x": 56.6,
+            "y": 21.2,
+            "rx": 5.0,
+            "ry": 7.5
+          },
+          {
+            "x": 78.8,
+            "y": 21.2,
+            "rx": 5.0,
+            "ry": 7.5
+          },
+          {
+            "x": 96.6,
+            "y": 21.7,
+            "rx": 5.0,
+            "ry": 7.5
+          },
+          {
+            "x": 41.9,
+            "y": 21.2,
+            "rx": 5.0,
+            "ry": 7.5
+          },
+          {
             "x": 35.6,
-            "y": 30.0
+            "y": 21.7,
+            "rx": 5.0,
+            "ry": 7.5
+          }
+        ]
+      },
+      {
+        "title": "A harbour town",
+        "a": "assets/img/diff-harbour-a.jpg",
+        "b": "assets/img/diff-harbour-b.jpg",
+        "spots": [
+          {
+            "x": 71.2,
+            "y": 50.8,
+            "rx": 5.6,
+            "ry": 5.8
           },
           {
-            "x": 50.0,
-            "y": 50.0
+            "x": 19.8,
+            "y": 53.5,
+            "rx": 4.5,
+            "ry": 5.4
           },
           {
-            "x": 78.4,
-            "y": 70.0
+            "x": 34.2,
+            "y": 45.4,
+            "rx": 5.5,
+            "ry": 7.9
           },
           {
-            "x": 35.6,
-            "y": 70.0
+            "x": 57.2,
+            "y": 46.7,
+            "rx": 4.4,
+            "ry": 5.8
           },
           {
-            "x": 21.4,
-            "y": 50.0
+            "x": 28.9,
+            "y": 50.2,
+            "rx": 7.7,
+            "ry": 6.5
           }
         ]
       }

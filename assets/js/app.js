@@ -1,4 +1,4 @@
-import { videos, tests, games, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt } from './data.js?v=8';
+import { videos, tests, games, youtubeWatchUrl, youtubeThumb, youtubeThumbAlt } from './data.js?v=9';
 
 /* ---------------------------------------------------------------
    State
@@ -803,9 +803,10 @@ function spotGame(game) {
   let revealed = 0;
   let ticker = null;
 
-  // the hotspots are in per cent, so the tolerance is an ellipse of the same shape
-  const NEAR_X = 8.6;
-  const NEAR_Y = 11.4;
+  // each hotspot carries its own reach, in per cent, so a big object is easier to
+  // hit than a small one
+  const reachX = (spot) => spot.rx || 8.6;
+  const reachY = (spot) => spot.ry || 11.4;
 
   function draw() {
     const scene = scenes[at];
@@ -843,7 +844,7 @@ function spotGame(game) {
         let closest = Infinity;
         scene.spots.forEach((spot, i) => {
           if (resolved.has(i)) return;
-          const d = ((x - spot.x) / NEAR_X) ** 2 + ((y - spot.y) / NEAR_Y) ** 2;
+          const d = ((x - spot.x) / reachX(spot)) ** 2 + ((y - spot.y) / reachY(spot)) ** 2;
           if (d <= 1 && d < closest) { closest = d; hit = i; }
         });
 
