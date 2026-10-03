@@ -68,7 +68,7 @@ if INLINE:
 
 # one classic script: data.js first, with the import that joined them removed.
 # Classic rather than a module so the file also works opened straight from disk.
-script = re.sub(r'^export ', '', data, flags=re.M) + '\n' + re.sub(r"^import .*?from '\./data\.js';\n", '', app, flags=re.M | re.S)
+script = re.sub(r'^export ', '', data, flags=re.M) + '\n' + re.sub(r"^import .*?from '\./data\.js[^']*';\n", '', app, flags=re.M | re.S)
 
 html = read('index.html')
 html = re.sub(r'  <link rel="stylesheet" href="assets/css/style\.css[^"]*" />\n',

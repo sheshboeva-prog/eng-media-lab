@@ -91,7 +91,8 @@ The filter chips are built from the `topic` values in the active tab, so adding 
 entry with a new topic adds its chip automatically. There are no CEFR levels.
 
 Bump the `?v=` on the stylesheet and script links in `index.html` whenever either
-changes. Pages caches assets for several minutes, and without a new URL returning
+changes, and the one on the `data.js` import at the top of `app.js` with them, since
+that file is fetched by the module rather than by the page. Pages caches assets for several minutes, and without a new URL returning
 visitors keep the old file until that expires.
 
 ## Publishing to GitHub Pages
